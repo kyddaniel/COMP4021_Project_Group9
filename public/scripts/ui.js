@@ -142,6 +142,11 @@ const OnlineUsersPanel = (function() {
             if (username != currentUser.username) {
                 onlineUsersArea.append(
                     $("<div id='username-" + username + "'></div>")
+                        .bind({
+                            click: function() {
+                               Socket.callInvite(currentUser.username, username);
+                            }
+                        })
                         .append(UI.getUserDisplay(onlineUsers[username]))
                 );
             }
@@ -155,11 +160,19 @@ const OnlineUsersPanel = (function() {
 		// Find the user
 		const userDiv = onlineUsersArea.find("#username-" + user.username);
 		
+        // Get the current user
+        const currentUser = Authentication.getUser();
+
 		// Add the user
 		if (userDiv.length == 0) {
 			onlineUsersArea.append(
 				$("<div id='username-" + user.username + "'></div>")
-					.append(UI.getUserDisplay(user))
+                    .bind({
+                        click: function() {
+                            Socket.callInvite(currentUser.username, user.username);
+                        }
+                    })
+                    .append(UI.getUserDisplay(user))
 			);
 		}
 	};
@@ -282,5 +295,35 @@ const UI = (function() {
         }
     };
 
-    return { getUserDisplay, initialize };
+
+    // This function initializes the UI
+    const invite = function(inviter, player) {
+        const currentUser = Authentication.getUser();
+        let message = inviter + " wants to play with you!";
+        if(player == currentUser.username) {
+            if (confirm(message) == true) {
+                    console.log("Player accept!");
+                    
+                    if(player == currentUser.username || inviter == currentUser.username) {
+                        $("#container").hide();
+                    }
+                    
+                    Socket.callStartGame(inviter, player);
+                }
+                else {
+                    console.log("Player refuse!");
+                }
+        }
+    };
+
+    // This function prepare the game screen
+    const perpareGameScreen = function(inviter, player) {
+        const currentUser = Authentication.getUser();
+        if(player == currentUser.username || inviter == currentUser.username) {
+            $("#container").hide();
+            $("#game-screen").show();
+        }
+    };
+
+    return { getUserDisplay, initialize, invite, perpareGameScreen };
 })();

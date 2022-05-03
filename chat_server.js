@@ -239,6 +239,27 @@ io.on("connection", (socket) => {
         }
             
     })
+
+
+    // Handle invite event
+    socket.on("call invite", (inviter, player_name) => {
+        // broadcast the invitation to target player
+        if(socket.request.session.user) {
+            let info = {inviterName: inviter, playerName:player_name};
+            io.emit("invite", JSON.stringify(info));
+        }
+            
+    })
+
+    // Handle start game event
+    socket.on("call start game", (inviter, player) => {
+        // broadcast the starting event to both players
+        if(socket.request.session.user) {
+            let info = {inviterName: inviter, playerName:player};
+            io.emit("start main game", JSON.stringify(info));
+        }
+            
+    })
 });
 
 // Use a web server to listen at port 8000
@@ -248,5 +269,6 @@ io.on("connection", (socket) => {
 httpServer.listen(8000, () => {
     console.log("The chat server has started...");
 });
+
 
 

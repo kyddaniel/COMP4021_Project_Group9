@@ -64,12 +64,50 @@ const Socket = (function() {
         socket.on("typing", (msg) => {
             ChatPanel.typing(JSON.parse(msg));
         });
+
+
+        // Set up invite event for UI
+        socket.on("invite", (info) => {
+            //ChatPanel.typing(JSON.parse(player));
+            let message = JSON.parse(info);
+            let inviter = message.inviterName;
+            let player = message.playerName;
+            console.log("Inviter: ", inviter);
+            console.log("Player invited: ", player);
+            
+            UI.invite(inviter, player);
+        });
+
+
+        // Set up starting game
+        socket.on("start main game", (info) => {
+            //ChatPanel.typing(JSON.parse(player));
+            let message = JSON.parse(info);
+            let inviter = message.inviterName;
+            let player = message.playerName;
+                        
+            UI.perpareGameScreen(inviter, player);
+        });
+
     };
 
     // Handle key down event called from ChatPanel
     const anyKeyDown = function() {
         socket.emit("key down");
     };
+
+
+    // Handle invite event
+    const callInvite = function(inviter, player_name) {
+        socket.emit("call invite", inviter, player_name);
+    };
+
+    // Handle start game event
+    const callStartGame = function(inviter, player) {
+        socket.emit("call start game", inviter, player);
+    };
+
+
 
 
     // This function disconnects the socket from the server
@@ -85,5 +123,5 @@ const Socket = (function() {
         }
     };
 
-    return { getSocket, connect, disconnect, postMessage, anyKeyDown };
+    return { getSocket, connect, disconnect, postMessage, anyKeyDown, callInvite, callStartGame };
 })();
