@@ -169,6 +169,8 @@ const OnlineUsersPanel = (function() {
 				$("<div id='username-" + user.username + "'></div>")
                     .bind({
                         click: function() {
+                            // let message = "You sent an invitation to " + user.username + "!";
+                            // $("#invitation").html(message);
                             Socket.callInvite(currentUser.username, user.username);
                         }
                     })
@@ -188,7 +190,11 @@ const OnlineUsersPanel = (function() {
 		if (userDiv.length > 0) userDiv.remove();
 	};
 
-    return { initialize, update, addUser, removeUser };
+    const clearMessage = function(){
+        //$("#invitation").html("");
+    }
+
+    return { initialize, update, addUser, removeUser, clearMessage };
 })();
 
 const ChatPanel = (function() {
@@ -296,25 +302,60 @@ const UI = (function() {
     };
 
 
-    // This function initializes the UI
+    //Handling the invite function
     const invite = function(inviter, player) {
         const currentUser = Authentication.getUser();
         let message = inviter + " wants to play with you!";
         if(player == currentUser.username) {
-            if (confirm(message) == true) {
-                    console.log("Player accept!");
+            
+            $("#invitation").html(message);
+            $("#invitation-buttons").css("visibility", "visible");
+            
+            $("#accept-button").on("click", () => {
+                console.log("Player accept!");
                     
                     if(player == currentUser.username || inviter == currentUser.username) {
                         $("#container").hide();
                     }
                     
                     Socket.callStartGame(inviter, player);
-                }
-                else {
-                    console.log("Player refuse!");
-                }
+            });
+
+            $("#decline-button").on("click", () => {
+                console.log("Player refuse!");
+                message = "You declined the invite!";
+                $("#invitation").html(message);
+                $("#invitation-buttons").css("visibility", "hidden");
+                Socket.declineInvite(inviter, player);
+                setTimeout(OnlineUsersPanel.clearMessage, 3000);
+                
+
+            });
+
+            // if (confirm(message) == true) {
+            //         console.log("Player accept!");
+                    
+            //         if(player == currentUser.username || inviter == currentUser.username) {
+            //             $("#container").hide();
+            //         }
+                    
+            //         Socket.callStartGame(inviter, player);
+            //     }
+            //     else {
+            //         console.log("Player refuse!");
+            //     }
         }
     };
+
+    const decline = function(inviter, player){
+        const currentUser = Authentication.getUser().username;
+        if(currentUser == inviter){
+            console.log(currentUser, inviter);
+            let msg = player + " declined your invitation TAT";
+            $("#invitation").html(msg);
+            setTimeout(OnlineUsersPanel.clearMessage,3000);
+        }
+    }
 
     // This function prepare the game screen
     const perpareGameScreen = function(inviter, player) {
@@ -325,5 +366,5 @@ const UI = (function() {
         }
     };
 
-    return { getUserDisplay, initialize, invite, perpareGameScreen };
+    return { getUserDisplay, initialize, invite, decline, perpareGameScreen };
 })();

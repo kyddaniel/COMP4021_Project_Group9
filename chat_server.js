@@ -251,6 +251,14 @@ io.on("connection", (socket) => {
             
     })
 
+    socket.on("di", (inviter, player_name) => {
+        if(socket.request.session.user){
+            let info = {inviter: inviter, player:player_name};
+            io.emit("decline", JSON.stringify(info));
+            console.log("decline emitted");
+        }
+    })
+
     // Handle start game event
     socket.on("call start game", (inviter, player) => {
         // broadcast the starting event to both players
