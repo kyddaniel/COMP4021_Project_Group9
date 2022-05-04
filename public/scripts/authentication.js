@@ -45,7 +45,7 @@ const Authentication = (function() {
         });
 
         // Delete when appropriate
-        if (onError) onError("This function is not yet implemented.");
+        //if (onError) onError("This function is not yet implemented.");
     };
 
     // This function sends a validate request to the server

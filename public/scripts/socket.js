@@ -49,7 +49,7 @@ const Socket = (function() {
             chatroom = JSON.parse(chatroom);
 
             // Show the chatroom messages
-            ChatPanel.update(chatroom);
+            //ChatPanel.update(chatroom);
         });
 
         // Set up the add message event
@@ -78,6 +78,11 @@ const Socket = (function() {
             UI.invite(inviter, player);
         });
 
+        socket.on("decline", (info) => {
+            let message = JSON.parse(info);
+            UI.decline(message.inviter, message.player);
+        })
+
 
         // Set up starting game
         socket.on("start main game", (info) => {
@@ -102,6 +107,11 @@ const Socket = (function() {
         socket.emit("call invite", inviter, player_name);
     };
 
+    const declineInvite = function(inviter, player_name){
+        socket.emit("di", inviter, player_name);
+        console.log("decline emitted");
+    }
+
     // Handle start game event
     const callStartGame = function(inviter, player) {
         socket.emit("call start game", inviter, player);
@@ -123,5 +133,7 @@ const Socket = (function() {
         }
     };
 
-    return { getSocket, connect, disconnect, postMessage, anyKeyDown, callInvite, callStartGame };
+    return { 
+        getSocket, connect, disconnect, postMessage, anyKeyDown, 
+        callInvite, declineInvite, callStartGame };
 })();

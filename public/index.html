@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>The Chatroom</title>
+    <title>Plants vs Zombies</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
@@ -9,8 +9,8 @@
 <body>
     <div id="container" class="col">
         <div id="header" class="row">
-            <div id="title">The Chatroom
-                <span class="material-icons">chat</span>
+            <div id="title">Plants Vs Zombies
+                <span class="material-icons">compost</span>
             </div>
 
             <div class="spacer-grow"></div>
@@ -26,15 +26,33 @@
 
         <div id="main-panel" class="row">
             <div id="chat-panel" class="col">
-                <div id="chat-area" class="col"></div>
+                <div id="chat-area" class="col">
+                    <div id="description-title">Game Description:</div>
+                    <div id="description-content">
+                        This is a COMP4021 project style Plants VS Zombies. <br>
+                        [ToDo] Some contents about how to play the game.
+                    </div>
+                    <div id="pair-up">How to Pair Up:</div>
+                    <div id="pair-up-content">
+                        Click on the icon of an online player to invite that player.
+                    </div>
+                </div>
                 <div id="typing-notice"></div>
+                <!--
                 <form id="chat-input-form" autocomplete="off">
                     <input id="chat-input" placeholder="Enter your message"></input>
                 </form>
+                -->
             </div>
 
             <div id="online-users-panel" class="col">
                 <div id="online-users-area" class="col"></div>
+                <div id="invitation"></div>
+                <div id="invitation-buttons">
+                    <button id="accept-button">Accept</button>
+                    <button id="decline-button">Decline</button>
+                </div>
+                
             </div>
         </div>
     </div>
