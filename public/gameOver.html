@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet">
+    <link href="ggstyle.css" rel="stylesheet">
+</head>
+<body>
+    <div id="stat-overlay">
+        <div id="stat-container">
+            <div id="stat-title" class="title">Game Ended!</div>
+            <div class="row">
+                <div id="info-title" class="column">
+                    <div id="info-kill" class="content">KILL:</div>
+                    <div id="info-coin" class="content">COIN:</div>
+                    <div id="info-score" class="content">SCORE:</div>
+                </div>
+                <div id="stat-player1" class="column">
+                    <div id="player1-rank" class="title">1st</div>
+                    <div id="player1-name" class="content">Player 1</div>
+                    <div id="player1-kill" class="content">0</div>
+                    <div id="player1-coin" class="content">0</div>
+                    <div id="player1-score" class="content">0</div>
+                </div>
+                <div id="stat-player2" class="column">
+                    <div id="player2-rank" class="title">2nd</div>
+                    <div id="player2-name" class="content">Player 2</div>
+                    <div id="player2-kill" class="content">0</div>
+                    <div id="player2-coin" class="content">0</div>
+                    <div id="player2-score" class="content">0</div>
+                </div>
+            </div>
+            <div id="promotion">Consider giving an A+ for us!</div>
+            <div id="controller">
+                <button id="play-again">Play Again</button>
+                <button id="return-to-title">Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./scripts/stats.js"></script>
+    <script>
+    $(document).ready(function() {
+        /* Get the canvas and 2D context */
+        Stats.gameOver()
+    
+    });
+    </script>
+</body>
+</html>
