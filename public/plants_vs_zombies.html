@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plants VS Zombies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P" rel="stylesheet">
+    <style>
+    body {
+        font-family: "Press Start 2P", sans-serif;
+    }
+    #game-container {
+        position: relative;
+    }
+    canvas, #counter, #game-start, #game-over {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+    }
+    canvas, #game-start, #game-over {
+        border: 1px solid gray;
+        width: 854px;
+        height: 480px;
+    }
+    canvas {
+        background: url(background.png);
+        background-size: cover;
+    }
+    #game-start, #game-over {
+        background: rgba(1, 1, 1, 0.8);
+    }
+    #counter text {
+        font-size: 130%;
+        fill: white;
+        stroke: black;
+        stroke-width: 1px;
+    }
+    #game-start text {
+        font-size: 150%;
+        fill: white;
+        text-anchor: middle;
+    }
+    #game-start #game-title {
+        font-size: 400%;
+        fill: url(#title-fill);
+        stroke: black;
+    }
+    #game-over text {
+        font-size: 120%;
+        fill: url(#game-over-fill);
+        text-anchor: middle;
+    }
+
+    /* - Set the style of the holes */
+    .sun-hitbox {
+        rx: 10; 
+        ry: 10;
+        fill:orange;
+        fill-opacity: 0;
+    }
+
+    .cursor-status {
+        visibility: "visible";
+        rx: 10;
+        ry: 10;
+        fill:red;
+        fill-opacity: 0;
+
+        cursor: default;
+    }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas width="854px" height="480px"></canvas>
+
+        <svg xmlns="http://www.w3.org/2000/svg" id="counter" width="854px" height="482px">
+            <text x="10" y="35">
+                TIME:<tspan id="time-remaining">20</tspan>
+            </text>
+            
+            <rect id="high-plant-box1" class="cursor-status" x="289" y="0" width="90" height="91"></rect>
+            <rect id="high-plant-box2" class="cursor-status" x="379" y="0" width="90" height="91"></rect>
+            <rect id="high-plant-box3" class="cursor-status" x="469" y="0" width="91" height="91"></rect>
+            <rect id="high-plant-box4" class="cursor-status" x="560" y="0" width="91" height="91"></rect>
+            <rect id="high-plant-box5" class="cursor-status" x="651" y="0" width="94" height="91"></rect>
+            
+            <rect id="low-plant-box1" class="cursor-status" x="289" y="391" width="90" height="91" ></rect>
+            <rect id="low-plant-box2" class="cursor-status" x="379" y="391" width="90" height="91" ></rect>
+            <rect id="low-plant-box3" class="cursor-status" x="469" y="391" width="90" height="91" ></rect>
+            <rect id="low-plant-box4" class="cursor-status" x="560" y="391" width="90" height="91" ></rect>
+            <rect id="low-plant-box5" class="cursor-status" x="651" y="391" width="90" height="91" ></rect>
+            
+
+            <rect id="plant-grid-0-0" class="cursor-status" x="200" y="92" width="61" height="72" ></rect>
+            <rect id="plant-grid-0-1" class="cursor-status" x="261" y="92" width="61" height="72" ></rect>
+            <rect id="plant-grid-0-2" class="cursor-status" x="322" y="92" width="61" height="72" ></rect>
+            <rect id="plant-grid-0-3" class="cursor-status" x="383" y="92" width="61" height="72" ></rect>
+            <rect id="plant-grid-0-4" class="cursor-status" x="444" y="92" width="61" height="72" ></rect>
+            <rect id="plant-grid-0-5" class="cursor-status" x="505" y="92" width="61" height="72" ></rect>
+            <rect id="plant-grid-0-6" class="cursor-status" x="566" y="92" width="61" height="72" ></rect>
+            <rect id="plant-grid-0-7" class="cursor-status" x="627" y="92" width="65" height="72" ></rect>
+            <rect id="plant-grid-0-8" class="cursor-status" x="692" y="92" width="68" height="72" ></rect>
+
+            <rect id="plant-grid-1-0" class="cursor-status" x="200" y="164" width="61" height="78" ></rect>
+            <rect id="plant-grid-1-1" class="cursor-status" x="261" y="164" width="61" height="78" ></rect>
+            <rect id="plant-grid-1-2" class="cursor-status" x="322" y="164" width="61" height="78" ></rect>
+            <rect id="plant-grid-1-3" class="cursor-status" x="383" y="164" width="61" height="78" ></rect>
+            <rect id="plant-grid-1-4" class="cursor-status" x="444" y="164" width="61" height="78" ></rect>
+            <rect id="plant-grid-1-5" class="cursor-status" x="505" y="164" width="61" height="78" ></rect>
+            <rect id="plant-grid-1-6" class="cursor-status" x="566" y="164" width="61" height="78" ></rect>
+            <rect id="plant-grid-1-7" class="cursor-status" x="627" y="164" width="65" height="78" ></rect>
+            <rect id="plant-grid-1-8" class="cursor-status" x="692" y="164" width="68" height="78" ></rect>
+            
+            <rect id="plant-grid-2-0" class="cursor-status" x="200" y="245" width="61" height="72" ></rect>
+            <rect id="plant-grid-2-1" class="cursor-status" x="261" y="245" width="61" height="72" ></rect>
+            <rect id="plant-grid-2-2" class="cursor-status" x="322" y="245" width="61" height="72" ></rect>
+            <rect id="plant-grid-2-3" class="cursor-status" x="383" y="245" width="61" height="72" ></rect>
+            <rect id="plant-grid-2-4" class="cursor-status" x="444" y="245" width="61" height="72" ></rect>
+            <rect id="plant-grid-2-5" class="cursor-status" x="505" y="245" width="61" height="72" ></rect>
+            <rect id="plant-grid-2-6" class="cursor-status" x="566" y="245" width="61" height="72" ></rect>
+            <rect id="plant-grid-2-7" class="cursor-status" x="627" y="245" width="65" height="72" ></rect>
+            <rect id="plant-grid-2-8" class="cursor-status" x="692" y="245" width="68" height="72" ></rect>
+
+            <rect id="plant-grid-3-0" class="cursor-status" x="200" y="317" width="61" height="72" ></rect>
+            <rect id="plant-grid-3-1" class="cursor-status" x="261" y="317" width="61" height="72" ></rect>
+            <rect id="plant-grid-3-2" class="cursor-status" x="322" y="317" width="61" height="72" ></rect>
+            <rect id="plant-grid-3-3" class="cursor-status" x="383" y="317" width="61" height="72" ></rect>
+            <rect id="plant-grid-3-4" class="cursor-status" x="444" y="317" width="61" height="72" ></rect>
+            <rect id="plant-grid-3-5" class="cursor-status" x="505" y="317" width="61" height="72" ></rect>
+            <rect id="plant-grid-3-6" class="cursor-status" x="566" y="317" width="61" height="72" ></rect>
+            <rect id="plant-grid-3-7" class="cursor-status" x="627" y="317" width="65" height="72" ></rect>
+            <rect id="plant-grid-3-8" class="cursor-status" x="692" y="317" width="68" height="72" ></rect>
+            
+
+            <rect id="sun-grid-0-0" class="sun-hitbox" x="245" y="75" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-0-1" class="sun-hitbox" x="306" y="75" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-0-2" class="sun-hitbox" x="367" y="75" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-0-3" class="sun-hitbox" x="428" y="75" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-0-4" class="sun-hitbox" x="489" y="75" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-0-5" class="sun-hitbox" x="550" y="75" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-0-6" class="sun-hitbox" x="611" y="75" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-0-7" class="sun-hitbox" x="672" y="75" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-0-8" class="sun-hitbox" x="733" y="75" width="60" height="60" visibility="hidden"></rect>
+
+            <rect id="sun-grid-1-0" class="sun-hitbox" x="245" y="147" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-1-1" class="sun-hitbox" x="306" y="147" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-1-2" class="sun-hitbox" x="367" y="147" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-1-3" class="sun-hitbox" x="428" y="147" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-1-4" class="sun-hitbox" x="489" y="147" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-1-5" class="sun-hitbox" x="550" y="147" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-1-6" class="sun-hitbox" x="611" y="147" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-1-7" class="sun-hitbox" x="672" y="147" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-1-8" class="sun-hitbox" x="733" y="147" width="60" height="60" visibility="hidden"></rect>
+            
+            <rect id="sun-grid-2-0" class="sun-hitbox" x="245" y="225" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-2-1" class="sun-hitbox" x="306" y="225" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-2-2" class="sun-hitbox" x="367" y="225" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-2-3" class="sun-hitbox" x="428" y="225" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-2-4" class="sun-hitbox" x="489" y="225" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-2-5" class="sun-hitbox" x="550" y="225" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-2-6" class="sun-hitbox" x="611" y="225" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-2-7" class="sun-hitbox" x="672" y="225" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-2-8" class="sun-hitbox" x="733" y="225" width="60" height="60" visibility="hidden"></rect>
+
+            <rect id="sun-grid-3-0" class="sun-hitbox" x="245" y="297" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-3-1" class="sun-hitbox" x="306" y="297" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-3-2" class="sun-hitbox" x="367" y="297" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-3-3" class="sun-hitbox" x="428" y="297" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-3-4" class="sun-hitbox" x="489" y="297" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-3-5" class="sun-hitbox" x="550" y="297" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-3-6" class="sun-hitbox" x="611" y="297" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-3-7" class="sun-hitbox" x="672" y="297" width="60" height="60" visibility="hidden"></rect>
+            <rect id="sun-grid-3-8" class="sun-hitbox" x="733" y="297" width="60" height="60" visibility="hidden"></rect>
+
+        </svg>
+
+
+        <svg xmlns="http://www.w3.org/2000/svg" id="game-start">
+            <defs>
+                <linearGradient id="title-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0.2" stop-color="red" />
+                    <stop offset="0.4" stop-color="yellow" />
+                    <stop offset="0.6" stop-color="green" />
+                    <stop offset="0.8" stop-color="purple" />
+                </linearGradient>
+            </defs>
+            <text id="game-title" x="50%" y="45%">PVZ!</text>
+            <text x="50%" y="60%">Click here to start the game</text>
+        </svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" id="game-over" style="display: none">
+            <defs>
+                <linearGradient id="game-over-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="red" />
+                    <stop offset="0.5" stop-color="yellow" />
+                    <stop offset="1" stop-color="red" />
+                </linearGradient>
+            </defs>
+            <text x="50%" y="50%">
+                Time's up! You win!
+            </text>
+        </svg>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="bounding_box.js"></script>
+    <script src="sprite.js"></script>
+
+    <script src="./plants_and_zombies/sun.js"></script>
+    <script src="./plants_and_zombies/sunflower.js"></script>
+    <script src="./plants_and_zombies/peashooter.js"></script>
+    <script src="./plants_and_zombies/peashooter2.js"></script>
+    <script src="./plants_and_zombies/wallnut.js"></script>
+    <script src="./plants_and_zombies/zombie.js"></script>
+    <script src="./plants_and_zombies/cone_zombie.js"></script>
+    <script src="./plants_and_zombies/bucket_zombie.js"></script>
+    <script src="./plants_and_zombies/pea.js"></script>
+
+    <script>
+     
+    
+    $(document).ready(function() {
+        /* Get the canvas and 2D context */
+        const cv = $("canvas").get(0);
+        const context = cv.getContext("2d");
+
+        /* Create the game area */
+        //const gameArea = BoundingBox(context, 165, 60, 420, 800); Original
+        const gameArea = BoundingBox(context, 0, 0, 480, 854); // may need to change
+
+        /* Create the sounds */
+        const sounds = {
+            background: new Audio("./audio/background_audio.m4a"),
+            starting: new Audio("./audio/starting.ogg"),
+
+            pea1: new Audio("./audio/pea1.ogg"),
+            pea2: new Audio("./audio/pea2.ogg"),
+            pea3: new Audio("./audio/pea3.ogg"),
+
+            zombie1: new Audio("./audio/zombie1.ogg"),
+            zombie2: new Audio("./audio/zombie2.ogg"),
+            zombie3: new Audio("./audio/zombie3.ogg"),
+            zombie4: new Audio("./audio/zombie4.ogg"),
+
+            eat1: new Audio("./audio/eat1.ogg"),
+            eat2: new Audio("./audio/eat2.ogg"),
+            eat3: new Audio("./audio/eat3.ogg"),
+
+            plant: new Audio("./audio/plant.ogg"),
+            shovel: new Audio("./audio/shovel.ogg"),
+            
+            sun: new Audio("./audio/sun.ogg"),
+
+            gameover: new Audio("./audio/endmusic.ogg")
+        };
+
+        const totalGameTime = 240;   // Total game time in seconds
+        const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
+        let gameStartTime = 0;      // The timestamp when the game starts
+        let collectedGems = 0;      // The number of gems collected in the game
+
+        // The resources player have
+        let player_sun = 0;
+
+        // Use to configure the image of the cursor
+        // 0 = none, 1 = sunflower, 2 = peashooter
+        // 3 = peashooter2, 4 = wallnut
+        let playerSelect = 0;
+
+        // The 2D array represent the plants in game scene
+        // 0 = none, 1 = sunflower, 2 = peashooter
+        // 3 = peashooter2, 4 = wallnut
+        let plantGrid = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                         [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+        
+        // The 3D array represent the sun(s) of each block
+        let sunGrid = [[[], [], [], [], [], [], [], [], []],
+                       [[], [], [], [], [], [], [], [], []],
+                       [[], [], [], [], [], [], [], [], []],
+                       [[], [], [], [], [], [], [], [], []]]
+
+        // The 2D array represent the zombies in game scene
+        const zombies = [ [],
+                          [],
+                          [],
+                          [] 
+        ]; 
+
+        // Initialize empty pea array (the attacks from plants)
+        const peas = [];
+    
+        
+        let gridX = 225;        // The x-position of left most block
+        let gridX_diff = 62;    // The x-differnece between blocks
+        let gridY = 125;        // The y-position of up most block
+        let gridY_diff = 75;    // The y-differnece between blocks
+
+        
+        let zombie_gridX = 800; // The x-position for spawning zombies
+        let zombie_gridY = 110; // The y-position of up most block for spawning zombies
+
+        // Random timer for spawning zombies
+        let zombie_timer_high = Math.floor(Math.random() * 3)*50 + 1000;
+        let zombie_timer_low = Math.floor(Math.random() * 3)*50 + 1000;
+        //console.log("First high zombie coming in: ", zombie_timer_high);
+        //console.log("First low zombie coming in: ", zombie_timer_low);
+
+        // Function for adding plants to the map
+        // 1 = sunflower, 2 = peashooter, 3 = peashooter2, 4 = wallnut
+        const addPlant = function(plantType, xGrid, yGrid) {
+            switch(plantType) {
+                case(1):
+                    plantGrid[yGrid][xGrid] = new Sunflower(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    break;
+                case(2):
+                    plantGrid[yGrid][xGrid] = new Peashooter(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    break;
+                case(3):
+                    plantGrid[yGrid][xGrid] = new Peashooter2(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    break;
+                case(4):
+                    plantGrid[yGrid][xGrid] = new Wallnut(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    break;
+            }
+        }
+
+        // Function for removing plants on the map
+        const removePlant = function(xGrid, yGrid) {
+            plantGrid[xGrid][yGrid] = 0;
+            //console.log("removed plant at {", xGrid, ",", yGrid, "}");
+        }
+
+        // Function for adding zombies to the map
+        const addZombie = function(yGrid) {
+            zombies[yGrid].push(new Zombie(context, zombie_gridX, zombie_gridY + gridY_diff*yGrid, "healthy_walking", gameArea));
+        }
+
+
+        // The status of icon for cursor
+        // 0 = default, 1 = sunflower, 2 = peashooter, 3 = peashooter2, 4 = wallnut, 5 = shovel
+        let cursor = 0;
+
+
+        /* Applying onclick() functions to the blocks in the game scene */
+        //======================================================================================================
+        document.getElementById("high-plant-box1").onclick = function() {clickSunFlower()};
+        document.getElementById("high-plant-box2").onclick = function() {clickShooter()};
+        document.getElementById("high-plant-box3").onclick = function() {clickShooter2()};
+        document.getElementById("high-plant-box4").onclick = function() {clickWallNut()};
+        document.getElementById("high-plant-box5").onclick = function() {clickShovel()};
+        document.getElementById("low-plant-box1").onclick = function() {clickSunFlower()};
+        document.getElementById("low-plant-box2").onclick = function() {clickShooter()};
+        document.getElementById("low-plant-box3").onclick = function() {clickShooter2()};
+        document.getElementById("low-plant-box4").onclick = function() {clickWallNut()};
+        document.getElementById("low-plant-box5").onclick = function() {clickShovel()};
+
+
+        document.getElementById("plant-grid-0-0").onclick = function() {placePlant(0, 0)};
+        document.getElementById("plant-grid-0-1").onclick = function() {placePlant(0, 1)};
+        document.getElementById("plant-grid-0-2").onclick = function() {placePlant(0, 2)};
+        document.getElementById("plant-grid-0-3").onclick = function() {placePlant(0, 3)};
+        document.getElementById("plant-grid-0-4").onclick = function() {placePlant(0, 4)};
+        document.getElementById("plant-grid-0-5").onclick = function() {placePlant(0, 5)};
+        document.getElementById("plant-grid-0-6").onclick = function() {placePlant(0, 6)};
+        document.getElementById("plant-grid-0-7").onclick = function() {placePlant(0, 7)};
+        document.getElementById("plant-grid-0-8").onclick = function() {placePlant(0, 8)};
+        
+        document.getElementById("plant-grid-1-0").onclick = function() {placePlant(1, 0)};
+        document.getElementById("plant-grid-1-1").onclick = function() {placePlant(1, 1)};
+        document.getElementById("plant-grid-1-2").onclick = function() {placePlant(1, 2)};
+        document.getElementById("plant-grid-1-3").onclick = function() {placePlant(1, 3)};
+        document.getElementById("plant-grid-1-4").onclick = function() {placePlant(1, 4)};
+        document.getElementById("plant-grid-1-5").onclick = function() {placePlant(1, 5)};
+        document.getElementById("plant-grid-1-6").onclick = function() {placePlant(1, 6)};
+        document.getElementById("plant-grid-1-7").onclick = function() {placePlant(1, 7)};
+        document.getElementById("plant-grid-1-8").onclick = function() {placePlant(1, 8)};
+
+        document.getElementById("plant-grid-2-0").onclick = function() {placePlant(2, 0)};
+        document.getElementById("plant-grid-2-1").onclick = function() {placePlant(2, 1)};
+        document.getElementById("plant-grid-2-2").onclick = function() {placePlant(2, 2)};
+        document.getElementById("plant-grid-2-3").onclick = function() {placePlant(2, 3)};
+        document.getElementById("plant-grid-2-4").onclick = function() {placePlant(2, 4)};
+        document.getElementById("plant-grid-2-5").onclick = function() {placePlant(2, 5)};
+        document.getElementById("plant-grid-2-6").onclick = function() {placePlant(2, 6)};
+        document.getElementById("plant-grid-2-7").onclick = function() {placePlant(2, 7)};
+        document.getElementById("plant-grid-2-8").onclick = function() {placePlant(2, 8)};
+
+        document.getElementById("plant-grid-3-0").onclick = function() {placePlant(3, 0)};
+        document.getElementById("plant-grid-3-1").onclick = function() {placePlant(3, 1)};
+        document.getElementById("plant-grid-3-2").onclick = function() {placePlant(3, 2)};
+        document.getElementById("plant-grid-3-3").onclick = function() {placePlant(3, 3)};
+        document.getElementById("plant-grid-3-4").onclick = function() {placePlant(3, 4)};
+        document.getElementById("plant-grid-3-5").onclick = function() {placePlant(3, 5)};
+        document.getElementById("plant-grid-3-6").onclick = function() {placePlant(3, 6)};
+        document.getElementById("plant-grid-3-7").onclick = function() {placePlant(3, 7)};
+        document.getElementById("plant-grid-3-8").onclick = function() {placePlant(3, 8)};
+
+
+        document.getElementById("sun-grid-0-0").onclick = function() {collectSun(0, 0)};
+        document.getElementById("sun-grid-0-1").onclick = function() {collectSun(0, 1)};
+        document.getElementById("sun-grid-0-2").onclick = function() {collectSun(0, 2)};
+        document.getElementById("sun-grid-0-3").onclick = function() {collectSun(0, 3)};
+        document.getElementById("sun-grid-0-4").onclick = function() {collectSun(0, 4)};
+        document.getElementById("sun-grid-0-5").onclick = function() {collectSun(0, 5)};
+        document.getElementById("sun-grid-0-6").onclick = function() {collectSun(0, 6)};
+        document.getElementById("sun-grid-0-7").onclick = function() {collectSun(0, 7)};
+        document.getElementById("sun-grid-0-8").onclick = function() {collectSun(0, 8)};
+        
+        document.getElementById("sun-grid-1-0").onclick = function() {collectSun(1, 0)};
+        document.getElementById("sun-grid-1-1").onclick = function() {collectSun(1, 1)};
+        document.getElementById("sun-grid-1-2").onclick = function() {collectSun(1, 2)};
+        document.getElementById("sun-grid-1-3").onclick = function() {collectSun(1, 3)};
+        document.getElementById("sun-grid-1-4").onclick = function() {collectSun(1, 4)};
+        document.getElementById("sun-grid-1-5").onclick = function() {collectSun(1, 5)};
+        document.getElementById("sun-grid-1-6").onclick = function() {collectSun(1, 6)};
+        document.getElementById("sun-grid-1-7").onclick = function() {collectSun(1, 7)};
+        document.getElementById("sun-grid-1-8").onclick = function() {collectSun(1, 8)};
+
+        document.getElementById("sun-grid-2-0").onclick = function() {collectSun(2, 0)};
+        document.getElementById("sun-grid-2-1").onclick = function() {collectSun(2, 1)};
+        document.getElementById("sun-grid-2-2").onclick = function() {collectSun(2, 2)};
+        document.getElementById("sun-grid-2-3").onclick = function() {collectSun(2, 3)};
+        document.getElementById("sun-grid-2-4").onclick = function() {collectSun(2, 4)};
+        document.getElementById("sun-grid-2-5").onclick = function() {collectSun(2, 5)};
+        document.getElementById("sun-grid-2-6").onclick = function() {collectSun(2, 6)};
+        document.getElementById("sun-grid-2-7").onclick = function() {collectSun(2, 7)};
+        document.getElementById("sun-grid-2-8").onclick = function() {collectSun(2, 8)};
+
+        document.getElementById("sun-grid-3-0").onclick = function() {collectSun(3, 0)};
+        document.getElementById("sun-grid-3-1").onclick = function() {collectSun(3, 1)};
+        document.getElementById("sun-grid-3-2").onclick = function() {collectSun(3, 2)};
+        document.getElementById("sun-grid-3-3").onclick = function() {collectSun(3, 3)};
+        document.getElementById("sun-grid-3-4").onclick = function() {collectSun(3, 4)};
+        document.getElementById("sun-grid-3-5").onclick = function() {collectSun(3, 5)};
+        document.getElementById("sun-grid-3-6").onclick = function() {collectSun(3, 6)};
+        document.getElementById("sun-grid-3-7").onclick = function() {collectSun(3, 7)};
+        document.getElementById("sun-grid-3-8").onclick = function() {collectSun(3, 8)};
+
+        // Change cursor to sunflower
+        const clickSunFlower = function() {
+            cursor = 1;
+            $(".cursor-status").css("cursor", "url('cursor/sunflower_cursor.png'), auto");
+        }
+        // Change cursor to peashooter
+        const clickShooter = function() {
+            cursor = 2;
+            $(".cursor-status").css("cursor", "url('cursor/peashooter_cursor.png'), auto");
+        }
+        // Change cursor to peashooter2
+        const clickShooter2 = function() {
+            cursor = 3;
+            $(".cursor-status").css("cursor", "url('cursor/peashooter2_cursor.png'), auto");
+        }
+        // Change cursor to wallnut
+        const clickWallNut = function() {
+            cursor = 4;
+            $(".cursor-status").css("cursor", "url('cursor/wallnut_cursor.png'), auto");
+        }
+        // Change cursor to shovel
+        const clickShovel = function() {
+            cursor = 5;
+            $(".cursor-status").css("cursor", "url('cursor/shovel_cursor.png'), auto");
+        }
+
+        // Place the plant on any clicked block
+        const placePlant = function(yGrid, xGrid) {
+            if(cursor != 0) {
+                switch(cursor) {
+                    case 1:
+                        addPlant(1, xGrid, yGrid);
+                        sounds.plant.currentTime = 0;
+                        sounds.plant.play();
+                        break;
+                    case 2:
+                        addPlant(2, xGrid, yGrid);
+                        sounds.plant.currentTime = 0;
+                        sounds.plant.play();
+                        break;
+                    case 3:
+                        addPlant(3, xGrid, yGrid);
+                        sounds.plant.currentTime = 0;
+                        sounds.plant.play();
+                        break;
+                    case 4:
+                        addPlant(4, xGrid, yGrid);
+                        sounds.plant.currentTime = 0;
+                        sounds.plant.play();
+                        break;
+                    case 5:
+                        removePlant(yGrid, xGrid);
+                        sounds.shovel.currentTime = 0;
+                        sounds.shovel.play();
+                        break;
+                }
+            }
+
+            // reset cursor after placing a plant
+            cursor = 0;
+            $(".cursor-status").css("cursor", "default");
+        }
+
+        // Collect any existing sun
+        const collectSun = function(yGrid, xGrid) {
+            if(sunGrid[yGrid][xGrid].length > 0) {
+                sunGrid[yGrid][xGrid].pop();
+                player_sun += 25;
+                sounds.sun.currentTime = 0;
+                sounds.sun.play();
+                console.log("Player now have", player_sun, "sun!");
+            }
+        }
+        //======================================================================================================
+
+
+        /* Create the sprites in the game */
+        //const player = Player(context, 427, 240, gameArea); // The player
+        //const gem = Gem(context, 427, 350, "green");        // The gem
+
+    
+        /* The main processing of the game */
+        function doFrame(now) {
+            if (gameStartTime == 0) gameStartTime = now;
+
+            /* Update the time remaining */
+            const gameTimeSoFar = now - gameStartTime;
+            const timeRemaining = Math.ceil((totalGameTime * 1000 - gameTimeSoFar) / 1000);
+            $("#time-remaining").text(timeRemaining);
+
+            /* Handle the game over situation here */
+            if(timeRemaining == 0) {
+                
+                sounds.background.pause();
+                sounds.gameover.play();
+
+                $("#game-over").fadeIn();
+                return;
+            }
+
+
+            // Update zombies spawning timer
+            zombie_timer_high--;
+            zombie_timer_low--;
+            if (zombie_timer_high == 0) {
+                addZombie(0);
+                addZombie(2);
+                zombie_timer_high = Math.floor(Math.random() * 11)*50 + 500;
+                //console.log("next high zombie in: ", zombie_timer_high);
+
+                let zombie_sound = Math.floor(Math.random() * 4);
+                switch(zombie_sound) {
+                    case 0:
+                        sounds.zombie1.currentTime = 0;
+                        sounds.zombie1.play();
+                        break;
+                    case 1:
+                        sounds.zombie2.currentTime = 0;
+                        sounds.zombie2.play();
+                        break;
+                    case 2:
+                        sounds.zombie3.currentTime = 0;
+                        sounds.zombie3.play();
+                        break;
+                    case 3:
+                        sounds.zombie4.currentTime = 0;
+                        sounds.zombie4.play();
+                        break;
+                }
+            }
+            if (zombie_timer_low == 0) {
+                addZombie(1);
+                addZombie(3);
+                zombie_timer_low = Math.floor(Math.random() * 11)*50 + 1000;
+                //console.log("next low zombie in: ", zombie_timer_low);
+
+                let zombie_sound = Math.floor(Math.random() * 4);
+                switch(zombie_sound) {
+                    case 0:
+                        sounds.zombie1.currentTime = 0;
+                        sounds.zombie1.play();
+                        break;
+                    case 1:
+                        sounds.zombie2.currentTime = 0;
+                        sounds.zombie2.play();
+                        break;
+                    case 2:
+                        sounds.zombie3.currentTime = 0;
+                        sounds.zombie3.play();
+                        break;
+                    case 3:
+                        sounds.zombie4.currentTime = 0;
+                        sounds.zombie4.play();
+                        break;
+                }
+            }
+
+
+            /* Update the sprites */
+            //======================================================================================================
+            //gem.update(now);
+            //player.update(now);
+
+            // Update plants
+            for(let i=0; i<plantGrid.length; i++) {
+                for(let j=0; j<plantGrid[i].length; j++) {
+                    
+                    if(plantGrid[i][j] != 0) {
+
+                        // Update plants' sprite
+                        plantGrid[i][j].plantUpdate(now);
+
+                        switch(plantGrid[i][j].getPlantType()) {
+                            
+                            // Check if sunflower can produce sun 
+                            case 1:
+                                if(plantGrid[i][j].canProduce()) {
+                                    let plantPosition = plantGrid[i][j].getXY();
+                                    sunGrid[i][j].push(new Sun(context, plantPosition.x+50, plantPosition.y-20));
+                                }
+                                break;
+                            // Check if peashooter can attack
+                            case 2:
+                                if(plantGrid[i][j].needAttack()) {
+                                    let plantPosition = plantGrid[i][j].getXY();
+                                    peas.push(new Pea(context, plantPosition.x, plantPosition.y, gameArea));
+                                }
+                            // Check if peashooter2 can attack
+                            case 3:
+                                if(plantGrid[i][j].needAttack()) {
+                                    let plantPosition = plantGrid[i][j].getXY();
+                                    peas.push(new Pea(context, plantPosition.x, plantPosition.y, gameArea));
+                                }                
+                        }
+                    }
+                }
+            }
+            
+            
+            // Make sun hitbox visible for any existing sun(s)
+            for(let i=0; i<sunGrid.length; i++) {
+                for(let j=0; j<sunGrid[i].length; j++) {
+                    
+                    let gridID = "#sun-grid-" + i.toString() + "-" + j.toString();
+                    if(sunGrid[i][j].length > 0) {                    
+                        $(gridID).css("visibility", "visible");
+                        
+                    }
+                    else {
+                        $(gridID).css("visibility", "hidden");
+                    }
+
+                    // also update the sprite for sun(s)
+                    for(let k=0; k<sunGrid[i][j].length; k++) {
+                        sunGrid[i][j][k].update();
+                    }
+                }
+            }
+
+
+            // Update zombies
+            for(let i=0; i<zombies.length; i++) {
+                for(let j=0; j<zombies[i].length; j++) {
+               
+                    let isAttacking = false;
+                    // check collisions with any plants in the same lane
+                    for(let k=0; k<plantGrid[i].length; k++) {
+                        
+                        if(plantGrid[i][k] != 0) {
+                              
+                            let plantPosition = plantGrid[i][k].getXY();
+                            let zombieHitBox = zombies[i][j].getBoundingBox();
+
+                            // check if zombie gets to any plants in the same lane
+                            if(zombieHitBox.isPointInBox(plantPosition.x+20, plantPosition.y)) {
+                                    
+                                isAttacking = true;
+                                let plantNoHealth = false;
+
+                                // update plant health
+                                if(zombies[i][j].canAttack()) {
+                                    plantNoHealth = plantGrid[i][k].takeDamage(1);
+
+                                    let zombie_sound = Math.floor(Math.random() * 3);
+                                    switch(zombie_sound) {
+                                        case 0:
+                                            sounds.eat1.currentTime = 0;
+                                            sounds.eat1.play();
+                                            break;
+                                        case 1:
+                                            sounds.eat2.currentTime = 0;
+                                            sounds.eat2.play();
+                                            break;
+                                        case 2:
+                                            sounds.eat3.currentTime = 0;
+                                            sounds.eat3.play();
+                                            break;
+                                    }
+                                }
+
+                                // remove plants with 0 HP
+                                if(plantNoHealth) {
+                                    removePlant(i, k);
+
+                                    // reset zombie attacking animation
+                                    zombies[i][j].resetAttack();
+                                    isAttacking = false;
+                                }
+                                    
+                            }
+                        }
+                    }
+                    
+                    // update the sprite for zombie(s)
+                    zombies[i][j].zombieUpdate(now, isAttacking);
+                }
+            }
+
+            // Update a(s) sprite
+            for(let i=0; i<peas.length; i++) {
+                
+                let peaOutBound = peas[i].peaUpdate(now);
+
+                // Remove pea if out of bound
+                if(peaOutBound) {
+                    peas.splice(i, 1);
+                }
+            }
+            //======================================================================================================
+
+
+            /* Check pea(s)' collision */
+            //======================================================================================================
+            for(let i=0; i<peas.length; i++) {  
+                let spliced = false;
+                for(let j=0; j<zombies.length; j++) {
+                    for(let k=0; k<zombies[j].length; k++) {
+                    
+                        let zombieHitBox = zombies[j][k].getBoundingBox();
+                        let peaPosition = peas[i].getXY();
+        
+                        // When pea hits a zombie,
+                        // remove pea from screen and decrease zombie health
+                        if(!zombies[j][k].isdead() && zombieHitBox.isPointInBox(peaPosition.x, peaPosition.y)) {
+                            peas.splice(i, 1);
+                            zombies[j][k].takeDamage(1);
+
+                            let pea_sound = Math.floor(Math.random() * 3);
+                            switch(pea_sound) {
+                                case 0:
+                                    sounds.pea1.currentTime = 0;
+                                    sounds.pea1.play();
+                                    break;
+                                case 1:
+                                    sounds.pea2.currentTime = 0;
+                                    sounds.pea2.play();
+                                    break;
+                                case 2:
+                                    sounds.pea3.currentTime = 0;
+                                    sounds.pea3.play();
+                                    break;
+                            }
+
+                            spliced = true;
+                        }
+                        
+                        // Wait for dead animation to complete before removing it from the screen
+                        if(zombies[j][k].isdead() && zombies[j][k].callSplice()) {
+                            setTimeout(() => {zombies[j].splice(k, 1)}, 3000);
+                        }
+
+                        // Removing element may cause error if continue checking,
+                        // so "break" the loop
+                        if(spliced)
+                            break;
+                    }
+
+                    if(spliced)
+                        break;
+                }
+
+                if(spliced)
+                    break;
+            }
+            //======================================================================================================
+
+
+            /* Clear the screen */
+            context.clearRect(0, 0, cv.width, cv.height);
+
+
+            /* Draw the sprites */
+
+            // Draw plant(s)
+            for(let i=0; i<plantGrid.length; i++) {
+                for(let j=0; j<plantGrid[i].length; j++) {
+                    
+                    if(plantGrid[i][j] != 0) {
+                        plantGrid[i][j].draw();
+                    }
+
+                }
+            }
+
+           // Draw sun(s)
+            for(let i=0; i<sunGrid.length; i++) {
+                for(let j=0; j<sunGrid[i].length; j++) {
+                    for(let k=0; k<sunGrid[i][j].length; k++) {
+                        sunGrid[i][j][k].draw();
+                    }
+                }
+            }
+
+            // Draw zombie(s)
+            for(let i=0; i<zombies.length; i++) {
+                for(let j=0; j<zombies[i].length; j++) {
+                    zombies[i][j].draw();
+                }
+            }
+            
+            // Draw pea(s)
+            for(let i=0; i<peas.length; i++) {
+                peas[i].draw();
+            }
+
+            /* Process the next frame */
+            requestAnimationFrame(doFrame);
+        }
+
+
+        /* Handle the start of the game */
+        $("#game-start").on("click", function() {
+            /* Hide the start screen */
+            $("#game-start").hide();
+
+            
+            /* Start the game */
+            sounds.background.play();
+            sounds.starting.play();
+            requestAnimationFrame(doFrame);
+        });
+    });
+    </script>
+</body>
+</html>

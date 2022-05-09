@@ -362,7 +362,9 @@ const UI = (function() {
         const currentUser = Authentication.getUser();
         if(player == currentUser.username || inviter == currentUser.username) {
             $("#container").hide();
+
             $("#game-screen").show();
+            $("#game-screen").load("plants_vs_zombies.html");
         }
     };
 
