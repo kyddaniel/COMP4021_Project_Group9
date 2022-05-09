@@ -59,6 +59,10 @@
         text-anchor: middle;
     }
 
+
+    #sun-count text {
+        text-align: center;
+    }
     /* - Set the style of the holes */
     .sun-hitbox {
         rx: 10; 
@@ -85,6 +89,12 @@
         <svg xmlns="http://www.w3.org/2000/svg" id="counter" width="854px" height="482px">
             <text x="10" y="35">
                 TIME:<tspan id="time-remaining">20</tspan>
+            </text>
+            <text id="player1-sun-count" class="sun-count text" x="220" y="85">
+                0
+            </text>
+            <text id="player2-sun-count" class="sun-count text" x="220" y="470">
+                200
             </text>
             
             <rect id="high-plant-box1" class="cursor-status" x="289" y="0" width="90" height="91"></rect>
