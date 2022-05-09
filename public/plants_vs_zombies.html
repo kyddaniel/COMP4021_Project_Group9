@@ -302,13 +302,18 @@
             gameover: new Audio("./audio/endmusic.ogg")
         };
 
-        const totalGameTime = 240;   // Total game time in seconds
+        const totalGameTime = 2;   // Total game time in seconds
         const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
 
+        //stats
         var player1
         var player2
+        var player1_kills
+        var player2_kills
+
+
 
         // The resources player have
         let player_sun = 500;
@@ -683,10 +688,13 @@
             /* Handle the game over situation here */
             if(timeRemaining == 0) {
                 
+                
                 sounds.background.pause();
                 sounds.gameover.play();
 
-                $("#game-over").fadeIn();
+                $("#game-screen").load("gameOver.html");
+                soc.emit("call game over", player1, player1_kills, player2, player2_kills)
+                //$("#game-over").fadeIn();
                 return;
             }
 

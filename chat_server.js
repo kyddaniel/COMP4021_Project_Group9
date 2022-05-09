@@ -168,6 +168,8 @@ io.use((socket, next) => {
 const onlineUsers = {};
 let gameReady = 0;
 let gameUsers = []
+let player1, player2
+let player1_kills, player2_kills
 
 io.on("connection", (socket) => {
 
@@ -282,7 +284,8 @@ io.on("connection", (socket) => {
             gameUsers.push(user.username)
             if (gameReady == 2){
                 gameReady = 0
-                console.log(gameUsers[0])
+                player1 = gameUsers[0]
+                player2 = gameUsers[1]
                 io.emit("game start", gameUsers[0], gameUsers[1])
                 gameUsers = []
             }
@@ -301,6 +304,17 @@ io.on("connection", (socket) => {
 
     socket.on("call zombie", (index) => {
         io.emit("zombie", index)
+    })
+
+    socket.on("call game over", (p1, p1k, p2, p2k) => {
+        // player1_kills = p1k
+        // player2_kills = p2k
+        player1_kills = 10
+        player2_kills = 20
+    })
+
+    socket.on("request stat", () => {
+        io.emit("stat", player1, player1_kills, player2, player2_kills)
     })
 
 });
