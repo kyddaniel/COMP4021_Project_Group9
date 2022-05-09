@@ -288,6 +288,11 @@ io.on("connection", (socket) => {
         
     })
 
+    socket.on("call add plant", (info, user) => {
+        let message = {info: info, playerName: user};
+        io.emit("add plant", message)
+    })
+
 });
 
 // Use a web server to listen at port 8000

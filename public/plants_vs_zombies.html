@@ -258,6 +258,9 @@
         console.log(Authentication.getUser())
         $("#game-start-waiting").hide()
 
+        const soc = Socket.getSocket()
+        const user = Authentication.getUser()
+
         /* Get the canvas and 2D context */
         const cv = $("canvas").get(0);
         const context = cv.getContext("2d");
@@ -348,6 +351,19 @@
         // Function for adding plants to the map
         // 1 = sunflower, 2 = peashooter, 3 = peashooter2, 4 = wallnut
         const addPlant = function(plantType, xGrid, yGrid) {
+            let info = {plantType: plantType, x: xGrid, y:yGrid}
+            soc.emit("call add plant", info, user.username)
+            innerAddPlant(plantType, xGrid, yGrid)
+        }
+
+        soc.on("add plant", (message) => {
+            // let message = JSON.stringify(info)
+            // let opp = message.user
+            // let plant = message.plantType
+            if(message.playerName != user.username) innerAddPlant(message.plantType, message.x, message.y)
+        })
+
+        const innerAddPlant = function(plantType, xGrid, yGrid) {
             switch(plantType) {
                 case(1):
                     plantGrid[yGrid][xGrid] = new Sunflower(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
@@ -869,10 +885,10 @@
         let started = false
         /* Handle the start of the game */
         $("#game-start").on("click", function() {
-            Game.getSocket().emit("press start", Authentication.getUser())
+            Socket.getSocket().emit("press start", Authentication.getUser())
             $("#game-start").hide();
             $("#game-start-waiting").show()
-            Game.getSocket().on("game start", () => {
+            Socket.getSocket().on("game start", () => {
                 /* Hide the waiting screen */
                 
                 $("#game-start-waiting").hide()
