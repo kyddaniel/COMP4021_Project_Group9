@@ -282,7 +282,9 @@ io.on("connection", (socket) => {
             gameUsers.push(user.username)
             if (gameReady == 2){
                 gameReady = 0
-                io.emit("game start")
+                console.log(gameUsers[0])
+                io.emit("game start", gameUsers[0], gameUsers[1])
+                gameUsers = []
             }
         }
         
@@ -291,6 +293,14 @@ io.on("connection", (socket) => {
     socket.on("call add plant", (info, user) => {
         let message = {info: info, playerName: user};
         io.emit("add plant", message)
+    })
+
+    socket.on("call update sun", (count, player) => {
+        io.emit("update sun", count, player)
+    })
+
+    socket.on("call zombie", (index) => {
+        io.emit("zombie", index)
     })
 
 });

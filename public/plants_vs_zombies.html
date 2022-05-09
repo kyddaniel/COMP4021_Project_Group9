@@ -96,6 +96,13 @@
             <text id="player2-sun-count" class="sun-count text" x="220" y="470">
                 200
             </text>
+
+            <text id="player1-name" class="sun-count text" x="220" y="65">
+                gibson
+            </text>
+            <text id="player2-name" class="sun-count text" x="220" y="450">
+                lam
+            </text>
             
             <rect id="high-plant-box1" class="cursor-status" x="289" y="0" width="90" height="91"></rect>
             <rect id="high-plant-box2" class="cursor-status" x="379" y="0" width="90" height="91"></rect>
@@ -300,8 +307,11 @@
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
 
+        var player1
+        var player2
+
         // The resources player have
-        let player_sun = 0;
+        let player_sun = 500;
 
         // Use to configure the image of the cursor
         // 0 = none, 1 = sunflower, 2 = peashooter
@@ -348,6 +358,50 @@
         //console.log("First high zombie coming in: ", zombie_timer_high);
         //console.log("First low zombie coming in: ", zombie_timer_low);
 
+        const disableGrid = function(){
+            if (user.username == player2){
+                $("#plant-grid-0-0").css("visibility", "hidden");
+                $("#plant-grid-0-1").css("visibility", "hidden");
+                $("#plant-grid-0-2").css("visibility", "hidden");
+                $("#plant-grid-0-3").css("visibility", "hidden");
+                $("#plant-grid-0-4").css("visibility", "hidden");
+                $("#plant-grid-0-5").css("visibility", "hidden");
+                $("#plant-grid-0-6").css("visibility", "hidden");
+                $("#plant-grid-0-7").css("visibility", "hidden");
+                $("#plant-grid-0-8").css("visibility", "hidden");
+
+                $("#plant-grid-1-0").css("visibility", "hidden");
+                $("#plant-grid-1-1").css("visibility", "hidden");
+                $("#plant-grid-1-2").css("visibility", "hidden");
+                $("#plant-grid-1-3").css("visibility", "hidden");
+                $("#plant-grid-1-4").css("visibility", "hidden");
+                $("#plant-grid-1-5").css("visibility", "hidden");
+                $("#plant-grid-1-6").css("visibility", "hidden");
+                $("#plant-grid-1-7").css("visibility", "hidden");
+                $("#plant-grid-1-8").css("visibility", "hidden");
+            }else{
+                $("#plant-grid-2-0").css("visibility", "hidden");
+                $("#plant-grid-2-1").css("visibility", "hidden");
+                $("#plant-grid-2-2").css("visibility", "hidden");
+                $("#plant-grid-2-3").css("visibility", "hidden");
+                $("#plant-grid-2-4").css("visibility", "hidden");
+                $("#plant-grid-2-5").css("visibility", "hidden");
+                $("#plant-grid-2-6").css("visibility", "hidden");
+                $("#plant-grid-2-7").css("visibility", "hidden");
+                $("#plant-grid-2-8").css("visibility", "hidden");
+
+                $("#plant-grid-3-0").css("visibility", "hidden");
+                $("#plant-grid-3-1").css("visibility", "hidden");
+                $("#plant-grid-3-2").css("visibility", "hidden");
+                $("#plant-grid-3-3").css("visibility", "hidden");
+                $("#plant-grid-3-4").css("visibility", "hidden");
+                $("#plant-grid-3-5").css("visibility", "hidden");
+                $("#plant-grid-3-6").css("visibility", "hidden");
+                $("#plant-grid-3-7").css("visibility", "hidden");
+                $("#plant-grid-3-8").css("visibility", "hidden");
+            }
+        }
+
         // Function for adding plants to the map
         // 1 = sunflower, 2 = peashooter, 3 = peashooter2, 4 = wallnut
         const addPlant = function(plantType, xGrid, yGrid) {
@@ -360,7 +414,9 @@
             // let message = JSON.stringify(info)
             // let opp = message.user
             // let plant = message.plantType
-            if(message.playerName != user.username) innerAddPlant(message.plantType, message.x, message.y)
+            if(message.playerName != user.username){
+                innerAddPlant(message.info.plantType, message.info.x, message.info.y)
+            } 
         })
 
         const innerAddPlant = function(plantType, xGrid, yGrid) {
@@ -391,6 +447,47 @@
             zombies[yGrid].push(new Zombie(context, zombie_gridX, zombie_gridY + gridY_diff*yGrid, "healthy_walking", gameArea));
         }
 
+        soc.on("zombie", (index) => {
+            addZombie(index)
+            let zombie_sound = Math.floor(Math.random() * 4);
+                switch(zombie_sound) {
+                    case 0:
+                        sounds.zombie1.currentTime = 0;
+                        sounds.zombie1.play();
+                        break;
+                    case 1:
+                        sounds.zombie2.currentTime = 0;
+                        sounds.zombie2.play();
+                        break;
+                    case 2:
+                        sounds.zombie3.currentTime = 0;
+                        sounds.zombie3.play();
+                        break;
+                    case 3:
+                        sounds.zombie4.currentTime = 0;
+                        sounds.zombie4.play();
+                        break;
+                }
+        }
+        )
+
+        const updateSun = function(){
+            if (user.username == player1){
+                $("#player1-sun-count").html(player_sun)
+            }else{
+                $("#player2-sun-count").html(player_sun)
+            }
+            soc.emit("call update sun", player_sun, user.username)
+        }
+
+        soc.on("update sun", (count, player) =>{
+            console.log("sun update")
+            if(player == player1){
+                $("#player1-sun-count").html(count)
+            }else{
+                $("#player2-sun-count").html(count)
+            }
+        })
 
         // The status of icon for cursor
         // 0 = default, 1 = sunflower, 2 = peashooter, 3 = peashooter2, 4 = wallnut, 5 = shovel
@@ -562,6 +659,7 @@
                 player_sun += 25;
                 sounds.sun.currentTime = 0;
                 sounds.sun.play();
+                updateSun()
                 console.log("Player now have", player_sun, "sun!");
             }
         }
@@ -596,57 +694,20 @@
             // Update zombies spawning timer
             zombie_timer_high--;
             zombie_timer_low--;
-            if (zombie_timer_high == 0) {
-                addZombie(0);
-                addZombie(2);
+            if (zombie_timer_high == 0 && (user.username == player1)) {
+                soc.emit("call zombie", 0)
+                soc.emit("call zombie", 2)
                 zombie_timer_high = Math.floor(Math.random() * 11)*50 + 500;
                 //console.log("next high zombie in: ", zombie_timer_high);
 
-                let zombie_sound = Math.floor(Math.random() * 4);
-                switch(zombie_sound) {
-                    case 0:
-                        sounds.zombie1.currentTime = 0;
-                        sounds.zombie1.play();
-                        break;
-                    case 1:
-                        sounds.zombie2.currentTime = 0;
-                        sounds.zombie2.play();
-                        break;
-                    case 2:
-                        sounds.zombie3.currentTime = 0;
-                        sounds.zombie3.play();
-                        break;
-                    case 3:
-                        sounds.zombie4.currentTime = 0;
-                        sounds.zombie4.play();
-                        break;
-                }
+                
             }
-            if (zombie_timer_low == 0) {
-                addZombie(1);
-                addZombie(3);
+            if (zombie_timer_low == 0 && (user.username == player2)) {
+                soc.emit("call zombie", 1)
+                soc.emit("call zombie", 3)
                 zombie_timer_low = Math.floor(Math.random() * 11)*50 + 1000;
                 //console.log("next low zombie in: ", zombie_timer_low);
 
-                let zombie_sound = Math.floor(Math.random() * 4);
-                switch(zombie_sound) {
-                    case 0:
-                        sounds.zombie1.currentTime = 0;
-                        sounds.zombie1.play();
-                        break;
-                    case 1:
-                        sounds.zombie2.currentTime = 0;
-                        sounds.zombie2.play();
-                        break;
-                    case 2:
-                        sounds.zombie3.currentTime = 0;
-                        sounds.zombie3.play();
-                        break;
-                    case 3:
-                        sounds.zombie4.currentTime = 0;
-                        sounds.zombie4.play();
-                        break;
-                }
             }
 
 
@@ -888,11 +949,17 @@
             Socket.getSocket().emit("press start", Authentication.getUser())
             $("#game-start").hide();
             $("#game-start-waiting").show()
-            Socket.getSocket().on("game start", () => {
+            Socket.getSocket().on("game start", (p1, p2) => {
                 /* Hide the waiting screen */
                 
                 $("#game-start-waiting").hide()
 
+                player1 = p1
+                player2 = p2
+                $("#player1-name").html(player1)
+                $("#player2-name").html(player2)
+                updateSun()
+                disableGrid()
                     
                 /* Start the game */
                 sounds.background.volume = 0.5;
