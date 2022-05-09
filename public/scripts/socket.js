@@ -94,6 +94,7 @@ const Socket = (function() {
             UI.perpareGameScreen(inviter, player);
         });
 
+
     };
 
     // Handle key down event called from ChatPanel

@@ -166,7 +166,8 @@ io.use((socket, next) => {
 
 // A JavaScript object storing the online users
 const onlineUsers = {};
-
+let gameReady = 0;
+let gameUsers = []
 
 io.on("connection", (socket) => {
 
@@ -268,6 +269,25 @@ io.on("connection", (socket) => {
         }
             
     })
+
+    socket.on("press start", (user) => {
+        let exist = false
+        for (var i=0; i < gameReady; i++){
+            if (gameUsers[i] == user.username){
+                exist = true
+            }
+        }
+        if (!exist) {
+            gameReady++
+            gameUsers.push(user.username)
+            if (gameReady == 2){
+                gameReady = 0
+                io.emit("game start")
+            }
+        }
+        
+    })
+
 });
 
 // Use a web server to listen at port 8000
