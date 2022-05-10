@@ -302,7 +302,7 @@
             gameover: new Audio("./audio/endmusic.ogg")
         };
 
-        const totalGameTime = 240;   // Total game time in seconds
+        const totalGameTime = 20;   // Total game time in seconds
         //const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
@@ -746,8 +746,10 @@
                 // Update number of sun collected
                 if (user.username == player1){
                     player1_sun_collected = player1_sun_collected + 1;
+                    player2_sun_collected = -1
                 }else{
                     player2_sun_collected = player2_sun_collected + 1;
+                    player1_sun_collected = -1
                 }
             }
         }
@@ -1027,8 +1029,10 @@
                             // Update number of zombie(s) killed
                             if (user.username == player1){
                                 player1_kills = player1_kills + 1;
+                                player2_kills = -1
                             }else{
                                 player2_kills = player2_kills + 1;
+                                player1_kills = -1
                             }
                             setTimeout(() => {zombies[j].splice(k, 1)}, 3000);
                         }

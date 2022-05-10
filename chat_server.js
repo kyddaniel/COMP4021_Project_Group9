@@ -19,7 +19,7 @@ const chatSession = session({
     resave: false,
     saveUninitialized: false,
     rolling: true,
-    cookie: { maxAge: 300000 }
+    cookie: { maxAge: 1500000 }
 });
 app.use(chatSession);
 
@@ -322,10 +322,11 @@ io.on("connection", (socket) => {
     })
 
     socket.on("call game over", (p1, p1k, p1s, p2, p2k, p2s) => {
-        player1_kills = p1k
-        player2_kills = p2k
-        player1_sun_collected = p1s
-        player2_sun_collected = p2s
+        if(p1k != -1) player1_kills = p1k
+        if(p2k != -1) player2_kills = p2k
+        if(p1s != -1) player1_sun_collected = p1s
+        if(p2s != -1) player2_sun_collected = p2s
+        
         // player1_kills = 10
         // player2_kills = 20
     })
