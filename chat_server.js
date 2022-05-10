@@ -317,10 +317,10 @@ io.on("connection", (socket) => {
     })
 
     socket.on("call game over", (p1, p1k, p2, p2k) => {
-        // player1_kills = p1k
-        // player2_kills = p2k
-        player1_kills = 10
-        player2_kills = 20
+        player1_kills = p1k
+        player2_kills = p2k
+        // player1_kills = 10
+        // player2_kills = 20
     })
 
     socket.on("request stat", () => {

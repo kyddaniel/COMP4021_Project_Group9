@@ -310,8 +310,8 @@
         //stats
         var player1
         var player2
-        var player1_kills
-        var player2_kills
+        var player1_kills = 0;
+        var player2_kills = 0;
 
 
         // The costs of plants
@@ -992,6 +992,12 @@
                         
                         // Wait for dead animation to complete before removing it from the screen
                         if(zombies[j][k].isdead() && zombies[j][k].callSplice()) {
+                            // Update number of zombie(s) killed
+                            if (user.username == player1){
+                                player1_kills = player1_kills + 1;
+                            }else{
+                                player2_kills = player2_kills + 1;
+                            }
                             setTimeout(() => {zombies[j].splice(k, 1)}, 3000);
                         }
 
