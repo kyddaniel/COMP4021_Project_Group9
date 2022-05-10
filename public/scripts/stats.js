@@ -41,7 +41,19 @@ const Stats = (function(){
         let index = Math.floor(Math.random()*8)
         $("#promotion").html(words[index])
 
+        $("#return-to-title").on("click", () => {
+            /*
+            $("#game-screen").load("index.html");   
+            $("#game-screen").hide()
+            UI.initialize()
+            SignInForm.hide();
+            UserPanel.update(Authentication.getUser());
+            UserPanel.show();
 
+            Socket.connect();
+            $("#container").show()*/
+            location.reload()
+        })
         
 
 

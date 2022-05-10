@@ -51,17 +51,7 @@
 
         })
 
-        $("#return-to-title").on("click", () => {
-            $("#game-screen").load("index.html");   
-            $("#game-screen").hide()
-            UI.initialize()
-            SignInForm.hide();
-            UserPanel.update(Authentication.getUser());
-            UserPanel.show();
-
-            Socket.connect();
-            $("#container").show()
-        })
+        
     
     });
     </script>
