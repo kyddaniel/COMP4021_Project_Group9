@@ -170,6 +170,7 @@ let gameReady = 0;
 let gameUsers = []
 let player1, player2
 let player1_kills, player2_kills
+let player1_sun_collected, player2_sun_collected
 
 io.on("connection", (socket) => {
 
@@ -320,15 +321,17 @@ io.on("connection", (socket) => {
         io.emit("cheat", player)
     })
 
-    socket.on("call game over", (p1, p1k, p2, p2k) => {
+    socket.on("call game over", (p1, p1k, p1s, p2, p2k, p2s) => {
         player1_kills = p1k
         player2_kills = p2k
+        player1_sun_collected = p1s
+        player2_sun_collected = p2s
         // player1_kills = 10
         // player2_kills = 20
     })
 
     socket.on("request stat", () => {
-        io.emit("stat", player1, player1_kills, player2, player2_kills)
+        io.emit("stat", player1, player1_kills, player1_sun_collected, player2, player2_kills, player2_sun_collected)
     })
 
 });
