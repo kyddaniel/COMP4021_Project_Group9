@@ -1029,7 +1029,7 @@
                             // Update number of zombie(s) killed
                             if (user.username == player1){
                                 player1_kills = player1_kills + 1;
-                                //player2_kills = -1
+                                player2_kills = -1
                             }
                             //else{
                                 //player2_kills = player2_kills + 1;
@@ -1091,10 +1091,11 @@
                         // Wait for dead animation to complete before removing it from the screen
                         if(zombies[j][k].isdead() && zombies[j][k].callSplice()) {
                             // Update number of zombie(s) killed
-                            if (user.username == player1){
+                            if (user.username == player2){
                             //    player1_kills = player1_kills + 1;
                             //}else{
                                 player2_kills = player2_kills + 1;
+                                player1_kills = -1
                             }
                             setTimeout(() => {zombies[j].splice(k, 1)}, 3000);
                         }
