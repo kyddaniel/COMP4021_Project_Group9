@@ -30,7 +30,7 @@ const Zombie = function(ctx, x, y, state, gameArea) {
 
     /* can change!!!!! */
     let speed = 10;
-    let health = 20;
+    let health = 10;
 
 
     let normal = true;
@@ -41,6 +41,9 @@ const Zombie = function(ctx, x, y, state, gameArea) {
     let noHealth = false;
     let calledSplice = false;
 
+    const setHealth = function(newHealth) {
+        health = newHealth;
+    }
 
     const zombieUpdate = function(time, isAttacking) {
 
@@ -153,6 +156,7 @@ const Zombie = function(ctx, x, y, state, gameArea) {
         draw: sprite.draw,
         update: sprite.update,
         
+        setHealth,
         zombieUpdate,
         getBoundingBox: sprite.getBoundingBox,
         canAttack,

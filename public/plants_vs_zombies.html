@@ -88,7 +88,7 @@
 
         <svg xmlns="http://www.w3.org/2000/svg" id="counter" width="854px" height="482px">
             <text x="10" y="35">
-                TIME:<tspan id="time-remaining">20</tspan>
+                TIME:<tspan id="time-remaining">240</tspan>
             </text>
             <text id="player1-sun-count" class="sun-count text" x="220" y="85">
                 0
@@ -322,7 +322,7 @@
 
 
         // The resources player have
-        let player_sun = 500;
+        let player_sun = 300;
 
         // Use to configure the image of the cursor
         // 0 = none, 1 = sunflower, 2 = peashooter
@@ -364,8 +364,8 @@
         let zombie_gridY = 110; // The y-position of up most block for spawning zombies
 
         // Random timer for spawning zombies
-        let zombie_timer_high = Math.floor(Math.random() * 3)*50 + 1000;
-        let zombie_timer_low = Math.floor(Math.random() * 3)*50 + 1000;
+        let zombie_timer_high = Math.floor(Math.random() * 10)*50 + 2000;
+        let zombie_timer_low = Math.floor(Math.random() * 10)*50 + 2000;
         //console.log("First high zombie coming in: ", zombie_timer_high);
         //console.log("First low zombie coming in: ", zombie_timer_low);
 
@@ -425,7 +425,7 @@
             if(!successAdd) {
                 plantType = 0;
             }
-            console.log(plantType);
+            //console.log(plantType);
             let info = {plantType: plantType, x: xGrid, y:yGrid}
             soc.emit("call add plant", info, user.username)
             
@@ -520,7 +520,12 @@
 
         // Function for adding zombies to the map
         const addZombie = function(yGrid) {
-            zombies[yGrid].push(new Zombie(context, zombie_gridX, zombie_gridY + gridY_diff*yGrid, "healthy_walking", gameArea));
+            let newZombie = new Zombie(context, zombie_gridX, zombie_gridY + gridY_diff*yGrid, "healthy_walking", gameArea);
+            let timeRemain = $("#time-remaining").html();
+            newZombie.setHealth(10+ (totalGameTime-timeRemain)/10);
+            //console.log("zombie health:", (totalGameTime-timeRemain)/10);
+            //zombies[yGrid].push(new Zombie(context, zombie_gridX, zombie_gridY + gridY_diff*yGrid, "healthy_walking", gameArea));
+            zombies[yGrid].push(newZombie);
         }
 
         soc.on("zombie", (index) => {
@@ -557,7 +562,7 @@
         }
 
         soc.on("update sun", (count, player) =>{
-            console.log("sun update")
+            //console.log("sun update")
             if(player == player1){
                 $("#player1-sun-count").html(count)
             }else{
@@ -748,7 +753,7 @@
             // let message = JSON.stringify(info)
             // let opp = message.user
             // let plant = message.plantType
-            console.log(player, user.username);
+            //console.log(player, user.username);
             if(player != user.username){
                 innerCollectSun(player, message.x, message.y);
             } 
@@ -756,13 +761,13 @@
 
         const innerCollectSun = function(playerName, xGrid, yGrid) {
             sunGrid[yGrid][xGrid].pop();
-            console.log("pop", playerName);
+            //console.log("pop", playerName);
             if(user.username == playerName) {
                 player_sun += 25;
                 sounds.sun.currentTime = 0;
                 sounds.sun.play();
                 updateSun();
-                console.log("Player now have", player_sun, "sun!");
+                //console.log("Player now have", player_sun, "sun!");
             }
             
         }
@@ -803,7 +808,7 @@
             if (zombie_timer_high == 0 && (user.username == player1)) {
                 soc.emit("call zombie", 0)
                 soc.emit("call zombie", 2)
-                zombie_timer_high = Math.floor(Math.random() * 11)*50 + 500;
+                zombie_timer_high = Math.floor(Math.random() * 11)*50 + timeRemaining*10;
                 //console.log("next high zombie in: ", zombie_timer_high);
 
                 
@@ -811,7 +816,7 @@
             if (zombie_timer_low == 0 && (user.username == player2)) {
                 soc.emit("call zombie", 1)
                 soc.emit("call zombie", 3)
-                zombie_timer_low = Math.floor(Math.random() * 11)*50 + 1000;
+                zombie_timer_low = Math.floor(Math.random() * 11)*50 + timeRemaining*10;
                 //console.log("next low zombie in: ", zombie_timer_low);
 
             }
