@@ -12,7 +12,7 @@
             <div class="row">
                 <div id="info-title" class="column">
                     <div id="info-kill" class="content">KILL:</div>
-                    <div id="info-coin" class="content">COIN:</div>
+                    <div id="info-coin" class="content">SUN:</div>
                     <div id="info-score" class="content">SCORE:</div>
                 </div>
                 <div id="stat-player1" class="column">
@@ -46,8 +46,8 @@
         Stats.gameOver()
         const soc = Socket.getSocket()
         soc.emit("request stat")
-        soc.on("stat", (p1, p1k, p2, p2k) => {
-            Stats.gameOver(p1, p1k, p2, p2k)
+        soc.on("stat", (p1, p1k, p1s, p2, p2k, p2s) => {
+            Stats.gameOver(p1, p1k, p1s, p2, p2k, p2s)
 
         })
 
