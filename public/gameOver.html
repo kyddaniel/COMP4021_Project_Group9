@@ -32,7 +32,7 @@
             </div>
             <div id="promotion">Consider giving an A+ for us!</div>
             <div id="controller">
-                <button id="play-again">Play Again</button>
+                
                 <button id="return-to-title">Menu</button>
             </div>
         </div>
@@ -47,22 +47,20 @@
         const soc = Socket.getSocket()
         soc.emit("request stat")
         soc.on("stat", (p1, p1k, p2, p2k) => {
-            $("#player1-name").html(p1)
-            $("#player2-name").html(p2)
-            $("#player1-kill").html(p1k)
-            $("#player2-kill").html(p2k)
+            Stats.gameOver(p1, p1k, p2, p2k)
 
-            if(p1k > p2k){
-                $("#player1-rank").html("1st")
-                $("#player2-rank").html("2nd")
-            }else if (p2k > p1k){
-                $("#player2-rank").html("1st")
-                $("#player1-rank").html("2nd")
-            }else{
-                $("#player2-rank").html("1st")
-                $("#player1-rank").html("1st")
-            }
+        })
 
+        $("#return-to-title").on("click", () => {
+            $("#game-screen").load("index.html");   
+            $("#game-screen").hide()
+            UI.initialize()
+            SignInForm.hide();
+            UserPanel.update(Authentication.getUser());
+            UserPanel.show();
+
+            Socket.connect();
+            $("#container").show()
         })
     
     });

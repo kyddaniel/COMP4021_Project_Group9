@@ -299,6 +299,10 @@ const UI = (function() {
         for (const component of components) {
             component.initialize();
         }
+
+        $("#invitation").hide()
+        $("#invitation-buttons").css("visibility", "hidden");
+
     };
 
 
@@ -308,6 +312,7 @@ const UI = (function() {
         let message = inviter + " wants to play with you!";
         if(player == currentUser.username) {
             
+            $("#invitation").show()
             $("#invitation").html(message);
             $("#invitation-buttons").css("visibility", "visible");
             

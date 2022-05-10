@@ -1,20 +1,30 @@
 const Stats = (function(){
 
-    const gameOver = function(p1, p2){
+    const gameOver = function(p1, p1k, p2, p2k){
         //TODO: set players name
         $("#player1-name").html(p1)
         $("#player2-name").html(p2)
 
         //TODO: update stats
-        $("#player1-kill").html("40")
+        $("#player1-kill").html(p1k)
         $("#player1-coin").html("21")
-        $("#player1-score").html("4021")
+        $("#player1-score").html(p1k*10)
 
-        $("#player2-kill").html("21")
+        $("#player2-kill").html(p2k)
         $("#player2-coin").html("40")
-        $("#player2-score").html("2022")
+        $("#player2-score").html(p2k*10)
 
-        //TODO: rank handling
+        if(p1k > p2k){
+            $("#player1-rank").html("1st")
+            $("#player2-rank").html("2nd")
+        }else if (p2k > p1k){
+            $("#player2-rank").html("1st")
+            $("#player1-rank").html("2nd")
+        }else{
+            $("#player2-rank").html("1st")
+            $("#player1-rank").html("1st")
+        }
+
 
         //promoting code
         const words = [
@@ -31,14 +41,8 @@ const Stats = (function(){
         let index = Math.floor(Math.random()*8)
         $("#promotion").html(words[index])
 
-        //TODO: button onclick
-        $("#play-again").on("click", () => {
-            
-        })
 
-        $("#return-to-title").on("click", () => {
-            
-        })
+        
 
 
     }
