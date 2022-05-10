@@ -302,8 +302,8 @@
             gameover: new Audio("./audio/endmusic.ogg")
         };
 
-        const totalGameTime = 2;   // Total game time in seconds
-        const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
+        const totalGameTime = 60;   // Total game time in seconds
+        //const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
 
@@ -313,6 +313,12 @@
         var player1_kills
         var player2_kills
 
+
+        // The costs of plants
+        let sunflower_cost = 50;
+        let peashooter_cost = 100;
+        let peashooter2_cost = 200;
+        let wallnut_cost = 100;
 
 
         // The resources player have
@@ -384,6 +390,8 @@
                 $("#plant-grid-1-6").css("visibility", "hidden");
                 $("#plant-grid-1-7").css("visibility", "hidden");
                 $("#plant-grid-1-8").css("visibility", "hidden");
+
+                $("#player1-sun-count").css("visibility", "hidden");
             }else{
                 $("#plant-grid-2-0").css("visibility", "hidden");
                 $("#plant-grid-2-1").css("visibility", "hidden");
@@ -404,15 +412,23 @@
                 $("#plant-grid-3-6").css("visibility", "hidden");
                 $("#plant-grid-3-7").css("visibility", "hidden");
                 $("#plant-grid-3-8").css("visibility", "hidden");
+
+                $("#player2-sun-count").css("visibility", "hidden");
             }
         }
 
         // Function for adding plants to the map
         // 1 = sunflower, 2 = peashooter, 3 = peashooter2, 4 = wallnut
         const addPlant = function(plantType, xGrid, yGrid) {
+            let successAdd = innerAddPlant(true, plantType, xGrid, yGrid)
+            
+            if(!successAdd) {
+                plantType = 0;
+            }
+            console.log(plantType);
             let info = {plantType: plantType, x: xGrid, y:yGrid}
             soc.emit("call add plant", info, user.username)
-            innerAddPlant(plantType, xGrid, yGrid)
+            
         }
 
         soc.on("add plant", (message) => {
@@ -420,25 +436,76 @@
             // let opp = message.user
             // let plant = message.plantType
             if(message.playerName != user.username){
-                innerAddPlant(message.info.plantType, message.info.x, message.info.y)
+                innerAddPlant(false, message.info.plantType, message.info.x, message.info.y)
             } 
         })
 
-        const innerAddPlant = function(plantType, xGrid, yGrid) {
+        const innerAddPlant = function(deductCost, plantType, xGrid, yGrid) {
+            let successAdd = false;
+            
             switch(plantType) {
                 case(1):
-                    plantGrid[yGrid][xGrid] = new Sunflower(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    if(!deductCost)
+                        plantGrid[yGrid][xGrid] = new Sunflower(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    else if(player_sun >= sunflower_cost) {
+                        plantGrid[yGrid][xGrid] = new Sunflower(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                        sounds.plant.currentTime = 0;
+                        sounds.plant.play();
+
+                        successAdd = true;
+                        if(deductCost) player_sun -= sunflower_cost;
+                    }
                     break;
                 case(2):
-                    plantGrid[yGrid][xGrid] = new Peashooter(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    if(!deductCost)
+                        plantGrid[yGrid][xGrid] = new Peashooter(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    else if(player_sun >= peashooter_cost) {
+                        plantGrid[yGrid][xGrid] = new Peashooter(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                        sounds.plant.currentTime = 0;
+                        sounds.plant.play();
+
+                        successAdd = true;
+                        if(deductCost) player_sun -= peashooter_cost;
+                    }
                     break;
                 case(3):
-                    plantGrid[yGrid][xGrid] = new Peashooter2(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    if(!deductCost)
+                        plantGrid[yGrid][xGrid] = new Peashooter2(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    else if(player_sun >= peashooter2_cost) {
+                        plantGrid[yGrid][xGrid] = new Peashooter2(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                        sounds.plant.currentTime = 0;
+                        sounds.plant.play();
+
+                        successAdd = true;
+                        if(deductCost) player_sun -= peashooter2_cost;
+                    }
                     break;
                 case(4):
-                    plantGrid[yGrid][xGrid] = new Wallnut(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    if(!deductCost)
+                        plantGrid[yGrid][xGrid] = new Wallnut(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                    else if(player_sun >= wallnut_cost) {
+                        plantGrid[yGrid][xGrid] = new Wallnut(context, gridX + gridX_diff*xGrid, gridY + gridY_diff*yGrid);
+                        sounds.plant.currentTime = 0;
+                        sounds.plant.play();
+
+                        successAdd = true;
+                        if(deductCost) player_sun -= wallnut_cost;
+                    }
                     break;
+
             }
+
+            if(user.username == player1) {
+                $("#player1-sun-count").html(player_sun);
+            }
+            if(user.username == player2) {
+                $("#player2-sun-count").html(player_sun);
+            }
+
+            cursor = 0;
+            $(".cursor-status").css("cursor", "default");
+
+            return successAdd;
         }
 
         // Function for removing plants on the map
@@ -626,23 +693,15 @@
                 switch(cursor) {
                     case 1:
                         addPlant(1, xGrid, yGrid);
-                        sounds.plant.currentTime = 0;
-                        sounds.plant.play();
                         break;
                     case 2:
                         addPlant(2, xGrid, yGrid);
-                        sounds.plant.currentTime = 0;
-                        sounds.plant.play();
                         break;
                     case 3:
                         addPlant(3, xGrid, yGrid);
-                        sounds.plant.currentTime = 0;
-                        sounds.plant.play();
                         break;
                     case 4:
                         addPlant(4, xGrid, yGrid);
-                        sounds.plant.currentTime = 0;
-                        sounds.plant.play();
                         break;
                     case 5:
                         removePlant(yGrid, xGrid);
@@ -660,13 +719,46 @@
         // Collect any existing sun
         const collectSun = function(yGrid, xGrid) {
             if(sunGrid[yGrid][xGrid].length > 0) {
-                sunGrid[yGrid][xGrid].pop();
+                //sunGrid[yGrid][xGrid].pop();
+                //player_sun += 25;
+                //sounds.sun.currentTime = 0;
+                //sounds.sun.play();
+                //updateSun();
+                //console.log("Player now have", player_sun, "sun!");
+
+                let info = {x: xGrid, y:yGrid}
+                soc.emit("call collect sun", info, user.username);
+                innerCollectSun(user.username, xGrid, yGrid);
+            }
+        }
+
+        //const collectSuns = function(xGrid, yGrid) {
+        //    let info = {x: xGrid, y:yGrid}
+        //    soc.emit("call collect sun", info, user.username);
+        //    innerCollectSun(user.username, xGrid, yGrid);
+        //}
+
+        soc.on("collect sun", (message, player) => {
+            // let message = JSON.stringify(info)
+            // let opp = message.user
+            // let plant = message.plantType
+            console.log(player, user.username);
+            if(player != user.username){
+                innerCollectSun(player, message.x, message.y);
+            } 
+        })
+
+        const innerCollectSun = function(playerName, xGrid, yGrid) {
+            sunGrid[yGrid][xGrid].pop();
+            console.log("pop", playerName);
+            if(user.username == playerName) {
                 player_sun += 25;
                 sounds.sun.currentTime = 0;
                 sounds.sun.play();
-                updateSun()
+                updateSun();
                 console.log("Player now have", player_sun, "sun!");
             }
+            
         }
         //======================================================================================================
 
