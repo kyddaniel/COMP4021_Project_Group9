@@ -1,17 +1,17 @@
 const Stats = (function(){
 
-    const gameOver = function(p1, p1k, p2, p2k){
+    const gameOver = function(p1, p1k, p1s, p2, p2k, p2s){
         //TODO: set players name
         $("#player1-name").html(p1)
         $("#player2-name").html(p2)
 
         //TODO: update stats
         $("#player1-kill").html(p1k)
-        $("#player1-coin").html("21")
+        $("#player1-coin").html(p1s)
         $("#player1-score").html(p1k*10)
 
         $("#player2-kill").html(p2k)
-        $("#player2-coin").html("40")
+        $("#player2-coin").html(p2s)
         $("#player2-score").html(p2k*10)
 
         if(p1k > p2k){
