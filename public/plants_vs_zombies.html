@@ -352,6 +352,7 @@
 
         // Initialize empty pea array (the attacks from plants)
         const peas = [];
+        const peas2 = [];
     
         
         let gridX = 225;        // The x-position of left most block
@@ -808,7 +809,10 @@
             if (zombie_timer_high == 0 && (user.username == player1)) {
                 soc.emit("call zombie", 0)
                 soc.emit("call zombie", 2)
-                zombie_timer_high = Math.floor(Math.random() * 11)*50 + timeRemaining*10;
+                zombie_timer_high = Math.floor(Math.random() * 11)*50 + (timeRemaining/2)*10;
+                if(timeRemaining < 60) {
+                    zombie_timer_high = Math.floor(Math.random() * 11)*50
+                }
                 //console.log("next high zombie in: ", zombie_timer_high);
 
                 
@@ -816,7 +820,10 @@
             if (zombie_timer_low == 0 && (user.username == player2)) {
                 soc.emit("call zombie", 1)
                 soc.emit("call zombie", 3)
-                zombie_timer_low = Math.floor(Math.random() * 11)*50 + timeRemaining*10;
+                zombie_timer_low = Math.floor(Math.random() * 11)*50 + (timeRemaining/2)*10;
+                if(timeRemaining < 60) {
+                    zombie_timer_low = Math.floor(Math.random() * 11)*50
+                }
                 //console.log("next low zombie in: ", zombie_timer_low);
 
             }
@@ -849,13 +856,19 @@
                             case 2:
                                 if(plantGrid[i][j].needAttack()) {
                                     let plantPosition = plantGrid[i][j].getXY();
-                                    peas.push(new Pea(context, plantPosition.x, plantPosition.y, gameArea));
+                                    if(i==0 || i==1) 
+                                        peas.push(new Pea(context, plantPosition.x, plantPosition.y, gameArea, i));
+                                    else
+                                        peas2.push(new Pea(context, plantPosition.x, plantPosition.y, gameArea, i));
                                 }
                             // Check if peashooter2 can attack
                             case 3:
                                 if(plantGrid[i][j].needAttack()) {
                                     let plantPosition = plantGrid[i][j].getXY();
-                                    peas.push(new Pea(context, plantPosition.x, plantPosition.y, gameArea));
+                                    if(i==0 || i==1) 
+                                        peas.push(new Pea(context, plantPosition.x, plantPosition.y, gameArea, i));
+                                    else
+                                        peas2.push(new Pea(context, plantPosition.x, plantPosition.y, gameArea, i));
                                 }                
                         }
                     }
@@ -942,7 +955,7 @@
                 }
             }
 
-            // Update a(s) sprite
+            // Update pea(s) sprite
             for(let i=0; i<peas.length; i++) {
                 
                 let peaOutBound = peas[i].peaUpdate(now);
@@ -950,6 +963,15 @@
                 // Remove pea if out of bound
                 if(peaOutBound) {
                     peas.splice(i, 1);
+                }
+            }
+            for(let i=0; i<peas2.length; i++) {
+                
+                let peaOutBound = peas2[i].peaUpdate(now);
+
+                // Remove pea if out of bound
+                if(peaOutBound) {
+                    peas2.splice(i, 1);
                 }
             }
             //======================================================================================================
@@ -968,8 +990,70 @@
                         // When pea hits a zombie,
                         // remove pea from screen and decrease zombie health
                         if(!zombies[j][k].isdead() && zombieHitBox.isPointInBox(peaPosition.x, peaPosition.y)) {
+                            
+                            let peaDamage = peas[i].getDamage(); 
+                            zombies[j][k].takeDamage(peaDamage);
                             peas.splice(i, 1);
-                            zombies[j][k].takeDamage(1);
+
+                            let pea_sound = Math.floor(Math.random() * 3);
+                            switch(pea_sound) {
+                                case 0:
+                                    sounds.pea1.currentTime = 0;
+                                    sounds.pea1.play();
+                                    break;
+                                case 1:
+                                    sounds.pea2.currentTime = 0;
+                                    sounds.pea2.play();
+                                    break;
+                                case 2:
+                                    sounds.pea3.currentTime = 0;
+                                    sounds.pea3.play();
+                                    break;
+                            }
+
+                            spliced = true;
+                        }
+                        
+                        // Wait for dead animation to complete before removing it from the screen
+                        if(zombies[j][k].isdead() && zombies[j][k].callSplice()) {
+                            // Update number of zombie(s) killed
+                            if (user.username == player1){
+                                player1_kills = player1_kills + 1;
+                            }else{
+                                player2_kills = player2_kills + 1;
+                            }
+                            setTimeout(() => {zombies[j].splice(k, 1)}, 3000);
+                        }
+
+                        // Removing element may cause error if continue checking,
+                        // so "break" the loop
+                        if(spliced)
+                            break;
+                    }
+
+                    if(spliced)
+                        break;
+                }
+
+                if(spliced)
+                    break;
+            }
+
+            for(let i=0; i<peas2.length; i++) {  
+                let spliced = false;
+                for(let j=0; j<zombies.length; j++) {
+                    for(let k=0; k<zombies[j].length; k++) {
+                    
+                        let zombieHitBox = zombies[j][k].getBoundingBox();
+                        let peaPosition = peas2[i].getXY();
+        
+                        // When pea hits a zombie,
+                        // remove pea from screen and decrease zombie health
+                        if(!zombies[j][k].isdead() && zombieHitBox.isPointInBox(peaPosition.x, peaPosition.y)) {
+                            
+                            let peaDamage = peas2[i].getDamage(); 
+                            zombies[j][k].takeDamage(peaDamage);
+                            peas2.splice(i, 1);
 
                             let pea_sound = Math.floor(Math.random() * 3);
                             switch(pea_sound) {
@@ -1054,11 +1138,48 @@
             for(let i=0; i<peas.length; i++) {
                 peas[i].draw();
             }
+            for(let i=0; i<peas2.length; i++) {
+                peas2[i].draw();
+            }
 
             /* Process the next frame */
             requestAnimationFrame(doFrame);
         }
 
+
+        /* Handle the keydown of arrow keys and spacebar */
+        $(document).on("keydown", function(event) {
+
+            /* Handle the key down */
+            switch(event.keyCode) {
+                
+                // Cheat key
+                case 67:
+                    soc.emit("call cheat", user.username);
+                    useCheat(user.username);
+                    break;
+            }
+        })
+
+        soc.on("cheat", (player) => {
+            useCheat(player);
+        })
+
+        const useCheat = function(player) {
+            //player.speedUp();
+            if(player == player1) {
+                for(let i=0; i<peas.length; i++) { 
+                    peas[i].useCheat();             
+                }
+            }
+            else {
+                for(let i=0; i<peas2.length; i++) { 
+                    peas2[i].useCheat();             
+                }
+            }
+            
+            console.log("cheat");
+        }
 
         let started = false
         /* Handle the start of the game */

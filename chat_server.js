@@ -316,6 +316,10 @@ io.on("connection", (socket) => {
         io.emit("zombie", index)
     })
 
+    socket.on("call cheat", (player) => {
+        io.emit("cheat", player)
+    })
+
     socket.on("call game over", (p1, p1k, p2, p2k) => {
         player1_kills = p1k
         player2_kills = p2k

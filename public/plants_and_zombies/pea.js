@@ -2,22 +2,32 @@
 // - `ctx` - A canvas context for drawing
 // - `x` - The initial x position of the pea
 // - `y` - The initial y position of the pea
-const Pea = function(ctx, x, y , gameArea) {
+const Pea = function(ctx, x, y , gameArea, atRow) {
 
     // This is the sprite sequence of the pea
-    const sequence = {x: 0, y: 0, width: 10, height: 14, count: 1, timing: 500, loop: true};
+    const sequence = {
+        normal:   {x: 0, y: 0, width: 10, height: 14, count: 1, timing: 500, loop: true},
+        cheat:   {x: 0, y: 0, width: 146, height: 194, count: 1, timing: 500, loop: true}
+    };
 
     // This is the sprite object of the pea created from the Sprite module.
     const sprite = Sprite(ctx, x, y);
 
 
-    //const peaSpeed = 3;
+    if(atRow==0 || atRow==1) {
+        side = 1;
+    }
+    else {
+        side = 2;
+    }
+    
     const peaSpeed = 3;
 
+    let peaDamage = 1;
 
 
     // The sprite object is configured for the fire sprite here.
-    sprite.setSequence(sequence)
+    sprite.setSequence(sequence.normal)
           .setScale(2)
           .setShadowScale({ x: 0, y: 0 })
           .useSheet("sprite/pea_sprite.png");
@@ -48,6 +58,21 @@ const Pea = function(ctx, x, y , gameArea) {
         return state;
     };
 
+    const getSide = function() {
+        return side;
+    }
+
+    const getDamage = function(){
+        return peaDamage;
+    }
+
+    const useCheat = function(){
+        peaDamage = 50;
+        sprite.setSequence(sequence.cheat)
+              .setScale(0.4)
+              .setShadowScale({ x: 0, y: 0 })
+              .useSheet("sprite/gibson_sprite.png");
+    }
 
     // The methods are returned as an object here.
     return {
@@ -56,6 +81,9 @@ const Pea = function(ctx, x, y , gameArea) {
         draw: sprite.draw,
         update: sprite.update,
         
+        getSide,
+        getDamage,
+        useCheat,
         peaUpdate,
         getBoundingBox: sprite.getBoundingBox
     };
