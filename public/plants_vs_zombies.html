@@ -312,6 +312,8 @@
         var player2
         var player1_kills = 0;
         var player2_kills = 0;
+        var player1_sun_collected = 0;
+        var player2_sun_collected = 0;
 
 
         // The costs of plants
@@ -741,6 +743,12 @@
                 let info = {x: xGrid, y:yGrid}
                 soc.emit("call collect sun", info, user.username);
                 innerCollectSun(user.username, xGrid, yGrid);
+                // Update number of sun collected
+                if (user.username == player1){
+                    player1_sun_collected = player1_sun_collected + 1;
+                }else{
+                    player2_sun_collected = player2_sun_collected + 1;
+                }
             }
         }
 
@@ -797,7 +805,7 @@
                 sounds.gameover.play();
 
                 $("#game-screen").load("gameOver.html");
-                soc.emit("call game over", player1, player1_kills, player2, player2_kills)
+                soc.emit("call game over", player1, player1_kills, player1_sun_collected, player2, player2_kills, player2_sun_collected)
                 //$("#game-over").fadeIn();
                 return;
             }
