@@ -8,16 +8,16 @@ const Stats = (function(){
         //TODO: update stats
         $("#player1-kill").html(p1k)
         $("#player1-coin").html(p1s)
-        $("#player1-score").html(p1k*10)
+        $("#player1-score").html(p1k*10+p1s*5)
 
         $("#player2-kill").html(p2k)
         $("#player2-coin").html(p2s)
-        $("#player2-score").html(p2k*10)
+        $("#player2-score").html(p2k*10+p2s*5)
 
-        if(p1k > p2k){
+        if(p1k*10+p1s*5 > p2k*10+p2s*5){
             $("#player1-rank").html("1st")
             $("#player2-rank").html("2nd")
-        }else if (p2k > p1k){
+        }else if (p2k*10+p2s*5 > p1k*10+p1s*5){
             $("#player2-rank").html("1st")
             $("#player1-rank").html("2nd")
         }else{

@@ -287,6 +287,10 @@ io.on("connection", (socket) => {
                 gameReady = 0
                 player1 = gameUsers[0]
                 player2 = gameUsers[1]
+                player1_kills = 0
+                player2_kills = 0
+                player1_sun_collected = 0
+                player2_sun_collected = 0
                 io.emit("game start", gameUsers[0], gameUsers[1])
                 gameUsers = []
             }
