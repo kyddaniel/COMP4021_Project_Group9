@@ -303,6 +303,11 @@ io.on("connection", (socket) => {
         io.emit("collect sun", message, player)
     })
 
+    socket.on("call remove plant", (info) => {
+        let message = info;
+        io.emit("remove plant", message)
+    })
+
     socket.on("call update sun", (count, player) => {
         io.emit("update sun", count, player)
     })

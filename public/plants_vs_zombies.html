@@ -302,7 +302,7 @@
             gameover: new Audio("./audio/endmusic.ogg")
         };
 
-        const totalGameTime = 60;   // Total game time in seconds
+        const totalGameTime = 240;   // Total game time in seconds
         //const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
@@ -510,9 +510,13 @@
 
         // Function for removing plants on the map
         const removePlant = function(xGrid, yGrid) {
-            plantGrid[xGrid][yGrid] = 0;
-            //console.log("removed plant at {", xGrid, ",", yGrid, "}");
+            let info = {x: xGrid, y:yGrid}
+            soc.emit("call remove plant", info, user.username);
         }
+
+        soc.on("remove plant", (message) => {
+            plantGrid[message.x][message.y] = 0;
+        })
 
         // Function for adding zombies to the map
         const addZombie = function(yGrid) {
@@ -560,6 +564,8 @@
                 $("#player2-sun-count").html(count)
             }
         })
+
+        
 
         // The status of icon for cursor
         // 0 = default, 1 = sunflower, 2 = peashooter, 3 = peashooter2, 4 = wallnut, 5 = shovel
@@ -778,7 +784,7 @@
             $("#time-remaining").text(timeRemaining);
 
             /* Handle the game over situation here */
-            if(timeRemaining == 0) {
+            if(timeRemaining <= 0) {
                 
                 
                 sounds.background.pause();
