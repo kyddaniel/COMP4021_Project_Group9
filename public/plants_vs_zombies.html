@@ -816,7 +816,7 @@
             // Update zombies spawning timer
             zombie_timer_high--;
             zombie_timer_low--;
-            if (zombie_timer_high <= 0) {
+            if (zombie_timer_high <= 0 && (user.username == player1)) {
                 soc.emit("call zombie", 0)
                 soc.emit("call zombie", 2)
                 zombie_timer_high = Math.floor(Math.random() * 11)*50 + (timeRemaining/2)*10;
@@ -827,7 +827,7 @@
 
                 
             }
-            if (zombie_timer_low <= 0) {
+            if (zombie_timer_low <= 0 && (user.username == player2)) {
                 soc.emit("call zombie", 1)
                 soc.emit("call zombie", 3)
                 zombie_timer_low = Math.floor(Math.random() * 11)*50 + (timeRemaining/2)*10;
