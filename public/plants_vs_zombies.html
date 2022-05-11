@@ -58,8 +58,6 @@
         fill: url(#game-over-fill);
         text-anchor: middle;
     }
-
-
     #sun-count text {
         text-align: center;
     }
@@ -87,21 +85,21 @@
         <canvas width="854px" height="480px"></canvas>
 
         <svg xmlns="http://www.w3.org/2000/svg" id="counter" width="854px" height="482px">
-            <text x="10" y="35">
-                TIME:<tspan id="time-remaining">240</tspan>
+            <text x="10" y="35" style="font: bold 40px Arial; fill: white;">
+                TIME:<tspan id="time-remaining" style="font: bold 40px Arial; fill: white;">240</tspan>
             </text>
-            <text id="player1-sun-count" class="sun-count text" x="220" y="85">
-                0
+            <text id="player1-sun-count" x="240" y="80" style="font: bold 30px Copperplate; fill: white;" dominant-baseline="middle" text-anchor="middle">
+                400
             </text>
-            <text id="player2-sun-count" class="sun-count text" x="220" y="470">
-                200
+            <text id="player2-sun-count" x="240" y="470" style="font: bold 30px Copperplate; fill: white;" dominant-baseline="middle" text-anchor="middle">
+                400
             </text>
 
-            <text id="player1-name" class="sun-count text" x="220" y="65">
-                gibson
+            <text id="player1-name" x="150" y="55" style="font: bold italic 40px serif; fill: black;" dominant-baseline="middle" text-anchor="middle">
+                -
             </text>
-            <text id="player2-name" class="sun-count text" x="220" y="450">
-                lam
+            <text id="player2-name" x="150" y="445"style="font: bold italic 40px serif; fill: black;" dominant-baseline="middle" text-anchor="middle"> 
+                -
             </text>
             
             <rect id="high-plant-box1" class="cursor-status" x="289" y="0" width="90" height="91"></rect>
@@ -224,7 +222,7 @@
                 </linearGradient>
             </defs>
             <text id="game-title" x="50%" y="45%">PVZ!</text>
-            <text x="50%" y="60%">Waiting for player</text>
+            <text x="50%" y="60%">Waiting for ooponent...</text>
         </svg>
 
         <svg xmlns="http://www.w3.org/2000/svg" id="game-over" style="display: none">
@@ -302,7 +300,7 @@
             gameover: new Audio("./audio/endmusic.ogg")
         };
 
-        const totalGameTime = 90;   // Total game time in seconds
+        const totalGameTime = 240;   // Total game time in seconds
         //const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
@@ -324,7 +322,7 @@
 
 
         // The resources player have
-        let player_sun = 400;
+        let player_sun = 300;
 
         // Use to configure the image of the cursor
         // 0 = none, 1 = sunflower, 2 = peashooter
@@ -367,8 +365,8 @@
         let zombie_gridY = 110; // The y-position of up most block for spawning zombies
 
         // Random timer for spawning zombies
-        let zombie_timer_high = Math.floor(Math.random() * 10)*50 + 2000;
-        let zombie_timer_low = Math.floor(Math.random() * 10)*50 + 2000;
+        let zombie_timer_high = Math.floor(Math.random() * 10)*50 + 1500;
+        let zombie_timer_low = Math.floor(Math.random() * 10)*50 + 1500;
         //console.log("First high zombie coming in: ", zombie_timer_high);
         //console.log("First low zombie coming in: ", zombie_timer_low);
 

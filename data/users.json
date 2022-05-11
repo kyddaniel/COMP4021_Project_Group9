@@ -23,5 +23,10 @@
   "avatar": "Chicken",
   "name": "test3",
   "password": "$2b$10$rxWquTOekXPq9XK6YoNyau.pKZl9LXwmBaoyHkhAWrn/X6PR03SRm"
+ },
+ "tok": {
+  "avatar": "Rooster",
+  "name": "duck",
+  "password": "$2b$10$ZrK/6pzDganCjZFrtgUOEeNnxLSmPmYO3nl6MEcMJiB8oRLwCrh0y"
  }
 }
