@@ -20,8 +20,10 @@
 cd C:\Users\you\Downloads
 ```
 4. Type
+```npm install```
+5. Type
 ```node chat_server.js```
 
-5. Open a web browser and type ```http://localhost:8000/```
+6. Open a web browser and type ```http://localhost:8000/```
 
-6. Enjoy the game
+7. Enjoy the game
