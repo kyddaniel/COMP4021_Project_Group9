@@ -302,7 +302,7 @@
             gameover: new Audio("./audio/endmusic.ogg")
         };
 
-        const totalGameTime = 60;   // Total game time in seconds
+        const totalGameTime = 90;   // Total game time in seconds
         //const gemMaxAge = 3000;     // The maximum age of the gems in milliseconds
         let gameStartTime = 0;      // The timestamp when the game starts
         let collectedGems = 0;      // The number of gems collected in the game
@@ -816,23 +816,23 @@
             // Update zombies spawning timer
             zombie_timer_high--;
             zombie_timer_low--;
-            if (zombie_timer_high == 0 && (user.username == player1)) {
+            if (zombie_timer_high <= 0) {
                 soc.emit("call zombie", 0)
                 soc.emit("call zombie", 2)
                 zombie_timer_high = Math.floor(Math.random() * 11)*50 + (timeRemaining/2)*10;
                 if(timeRemaining < 60) {
-                    zombie_timer_high = Math.floor(Math.random() * 11)*50
+                    zombie_timer_high = Math.floor(Math.random() * 11)*50 + 50
                 }
                 //console.log("next high zombie in: ", zombie_timer_high);
 
                 
             }
-            if (zombie_timer_low == 0 && (user.username == player2)) {
+            if (zombie_timer_low <= 0) {
                 soc.emit("call zombie", 1)
                 soc.emit("call zombie", 3)
                 zombie_timer_low = Math.floor(Math.random() * 11)*50 + (timeRemaining/2)*10;
                 if(timeRemaining < 60) {
-                    zombie_timer_low = Math.floor(Math.random() * 11)*50
+                    zombie_timer_low = Math.floor(Math.random() * 11)*50 + 50
                 }
                 //console.log("next low zombie in: ", zombie_timer_low);
 
