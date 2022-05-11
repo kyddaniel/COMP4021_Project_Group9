@@ -2,7 +2,7 @@
 
 # HKUST Spring 2022 COMP4021 Project Group 9 README
 
-Project: Plants vs Zombies
+**__Project: Plants vs Zombies__**
 
 Students participated:
 - LIU Man Hin (2060)
