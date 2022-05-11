@@ -2,12 +2,12 @@
 
 # HKUST Spring 2022 COMP4021 Project Group 9 README
 
-**__Project: Plants vs Zombies__**
+## **_Project: Plants vs Zombies_**
 
 Students participated:
-- LIU Man Hin (2060)
-- SUEN Ming Kwong (20607830)
-- SUEN Pui Ka (2060)
+- LIU Man Hin
+- SUEN Ming Kwong
+- SUEN Pui Ka
 
 
 ## How to play the game
