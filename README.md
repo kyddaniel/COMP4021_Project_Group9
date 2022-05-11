@@ -4,7 +4,7 @@
 
 ## **_Project: Plants vs Zombies_**
 
-Students participated:
+**Students participated:**
 - LIU Man Hin
 - SUEN Ming Kwong
 - SUEN Pui Ka
